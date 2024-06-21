@@ -1,0 +1,1 @@
+export const loginSessionName: 'currentuser' = 'currentuser'

@@ -1,0 +1,96 @@
+{
+    "Login": {
+        "BackText": "后退",
+        "WelcomeText": "欢迎回来!",
+        "Description": "要与我们保持联系，请登录",
+        "LoginText": "登录",
+        "LoginDescription": "使用您在注册期间输入的数据登录.",
+        "YourEmail": "你的邮件",
+        "YourPassword": "你的密码",
+        "ChangeLanguageTo": "将语言更改为",
+        "EnterAllFields": "请输入所有字段."
+    },
+    "Chats": {
+        "NewMessageText": "新消息",
+        "SearchChats": "搜索最近的聊天记录...",
+        "SearchConversation": "搜索对话...",
+        "WriteMessage": "写一个信息..."
+    },
+    "Contacts": {
+        "ContactsText": "联系人",
+        "NewContact": "新联系人",
+        "YourContacts": "您的联系人",
+        "SearchContacts": "搜索最近的联系人...",
+        "EnterNumber": "输入号码",
+        "SendText": "发送"
+    },
+    "Settings": {
+        "SettingsText": "设置",
+        "Account": "帐户",
+        "Profile": "轮廓",
+        "ChangePasswordText": "更改密码",
+        "Devices": "设备",
+        "Notifications": "通知",
+        "AppNotifications": "应用通知",
+        "MoreText": "更多的",
+        "LightMode": "灯光模式",
+        "DarkMode": "黑暗模式",
+        "Logout": "登出"
+    },
+    "Profile": {
+        "ProfileText": "轮廓",
+        "Name": "姓名",
+        "Email": "电子邮件",
+        "Phone": "电话",
+        "Username": "用户名",
+        "Password": "密码",
+        "EditText": "编辑",
+        "SaveText": "节省",
+        "UploadPhoto": "上传图片",
+        "OpenCamera": "开放式摄像头"
+    },
+    "ResetPassword": {
+        "BackText": "后退",
+        "UpdatePasswordText": "更新您的密码",
+        "PasswordDescription": "请输入您的新密码",
+        "CurrentPassword": "当前密码",
+        "NewPassword": "新密码",
+        "ConfirmNewPassword": "确认新密码",
+        "ResetPassword": "重设密码"
+    },
+    "Devices": {
+        "BackText": "后退",
+        "DevicesText": "设备",
+        "SelectedText": "已选"
+    },
+    "Error": {
+        "ServerError": "服务器错误",
+        "ChatError": "无法获得最近聊天，请检查您的设备",
+        "ChooseNewContactName": "请选择一个新的联系人姓名.",
+        "PleaseEnterAllFields": "请输入所有字段以更新您的密码.",
+        "PasswordLength": "您的密码必须至少有 6 个字符.",
+        "PasswordMatch": "新密码和确认密码不匹配.",
+        "PreviousPassword": "您的密码不能与之前的密码相同.",
+        "UpdateAccountSettings": "提交前更新您的帐户设置."
+    },
+    "General": {
+        "Chat": "聊天",
+        "Update": "更新",
+        "Cancel": "取消",
+        "FullName": "全名",
+        "Username": "用户名",
+        "Email": "电子邮件",
+        "Phone": "电话",
+        "Select": "选择",
+        "Selected": "已选",
+        "EnterMessage": "输入消息...",
+        "ImagePreview": "图像预览:",
+        "None": "没有任何",
+        "PR": "密码要求:",
+        "PRQH": "要创建新密码，您必须满足以下所有要求:",
+        "PRQ1": "1) 最少 8 个字符.",
+        "PRQ2": "2) 至少一个特殊字符.",
+        "PRQ3": "3) 至少一个数字.",
+        "PRQ4": "4) 不能与以前的密码相同."
+    }
+}

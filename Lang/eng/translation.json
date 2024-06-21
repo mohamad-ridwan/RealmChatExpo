@@ -1,0 +1,98 @@
+{
+    "Login": {
+      "BackText": "Back",
+      "WelcomeText": "Welcome back!",
+      "Description": "To keep connected with us please login",
+      "LoginText": "Log In",
+      "LoginDescription": "Login with your Data that you entered during your Registration.",
+      "YourEmail": "Your Email",
+      "YourPassword": "Your Password",
+      "ChangeLanguageTo": "Change Language To",
+      "EnterAllFields": "Please enter all fields."
+    },
+    "Chats": {
+      "NewMessageText": "New messages",
+      "SearchChats": "Search Recent Chats...",
+      "SearchConversation": "Search conversation...",
+      "WriteMessage": "Write a Message..."
+    },
+    "Contacts": {
+      "ContactsText": "CONTACTS",
+      "NewContact": "New Contact",
+      "YourContacts": "Your Contacts",
+      "SearchContacts": "Search Recent Contacts...",
+      "EnterNumber": "Enter Number",
+      "SendText": "Send"
+    }, 
+    "Settings": {
+      "SettingsText": "Settings",
+      "Account": "Account",
+      "Profile": "Profile",
+      "ChangePasswordText":"Change Password",
+      "Devices": "Devices",
+      "Notifications": "Notifications",
+      "AppNotifications": "App Notifications",
+      "MoreText":"More",
+      "LightMode": "Light Mode",
+      "DarkMode": "Dark Mode",
+      "Logout": "Logout"
+    },
+    "Profile": {
+      "ProfileText": "PROFILE",
+      "Name": "Name",
+      "Email": "Email",
+      "Username": "Username",
+      "Phone": "Phone",
+      "Password":"Password",
+      "EditText": "Edit",
+      "SaveText": "Save",
+      "UploadPhoto": "Upload Photo",
+      "OpenCamera": "Open Camera"
+
+    },
+    "ResetPassword": {
+      "BackText": "Back",
+      "UpdatePasswordText": "Update Your Password",
+      "PasswordDescription":"Please enter your new password",
+      "CurrentPassword": "Current Password",
+      "NewPassword": "New Password",
+      "ConfirmNewPassword": "Confirm New Password",
+      "ResetPassword":"Reset Password"
+    },
+    "Devices": {
+      "BackText": "Back",
+      "DevicesText": "Devices",
+      "SelectedText": "Selected"
+    },
+    "Error": {
+      "ServerError": "Server Error",
+      "ChatError": "Failed to get chat recent, check your device",
+      "ChooseNewContactName": "Please choose a new contact name.",
+      "PleaseEnterAllFields": "Please enter all fields to update your password.",
+      "PasswordLength": "Your password must have atleast 6 characters.",
+      "PasswordMatch": "New and confirm passwords don't match.",
+      "PreviousPassword": "Your password must not be same as your previous password.",
+      "UpdateAccountSettings": "Update your account settings before submitting."
+    },
+ 
+    "General": {
+      "Chat": "Chat",
+      "Update": "Update",
+      "Cancel": "Cancel",
+      "FullName": "Full Name",
+      "Username": "Username",
+      "Email": "Email",
+      "Phone": "Phone",
+      "Select": "Select",
+      "Selected": "Selected",
+      "EnterMessage": "Enter Message...",
+      "ImagePreview": "Image Preview:",
+      "None": "None",
+      "PR": "Password Requirements:",
+      "PRQH": "To create a new password, you have to meet all of the following requirements:",
+      "PRQ1": "1) Minimum 8 characters.",
+      "PRQ2": "2) At least one special character.",
+      "PRQ3": "3) At least one number.",
+      "PRQ4": "4) Can’t be the same as a previous password."
+    }
+  }
