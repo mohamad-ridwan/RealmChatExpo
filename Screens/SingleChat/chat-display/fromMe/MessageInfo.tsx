@@ -20,7 +20,7 @@ export default function MessageInfo({
         <Text
             style={{
                 textAlign: "right",
-                fontSize: 8,
+                fontSize: 9,
                 color: "#6B7C85",
             }}
         >

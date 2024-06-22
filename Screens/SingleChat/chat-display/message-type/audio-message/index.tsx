@@ -58,7 +58,7 @@ export default function AudioMessage({
     const playPauseAudio = async () => {
         if (sound) {
             if (isPlaying) {
-                setIsPlaying(false)
+                // setIsPlaying(false)
                 await sound.pauseAsync();
             } else {
                 setIsPlaying(true)
@@ -111,7 +111,7 @@ export default function AudioMessage({
     useEffect(() => {
         let interval: any = null;
         if (isPlaying) {
-            interval = setInterval(updatePosition, 100);
+            interval = setInterval(updatePosition, 0);
         } else if (!isPlaying && interval) {
             clearInterval(interval);
         }
@@ -140,7 +140,7 @@ export default function AudioMessage({
         ) {
             pauseAudio()
 
-            return ()=> dispatch(setCurrentPlaySound({mediaKey: ''}))
+            return () => dispatch(setCurrentPlaySound({ mediaKey: '' }))
         }
     }, [v, currentPlaySound, sound])
 
@@ -148,12 +148,11 @@ export default function AudioMessage({
         <View>
             <View style={styles.containerSlider}>
                 {!isPlaying ?
-                    <TouchableOpacity onPress={playPauseAudio}>
+                    <TouchableOpacity onPress={playPauseAudio} style={styles.icon}>
                         <FontAwesome6 name="play" size={24} color="#21C2C1" />
                     </TouchableOpacity>
-
                     :
-                    <TouchableOpacity onPress={playPauseAudio}>
+                    <TouchableOpacity onPress={playPauseAudio} style={styles.icon}>
                         <MaterialIcons name="pause" size={24} color="#21C2C1" />
                     </TouchableOpacity>
                 }
@@ -178,7 +177,8 @@ export default function AudioMessage({
 const styles = StyleSheet.create({
     timeStr: {
         marginLeft: 35,
-        fontSize: 10
+        fontSize: 9,
+        marginBottom: -13
     },
     containerSlider: {
         flex: 1,
@@ -188,7 +188,11 @@ const styles = StyleSheet.create({
     },
     slider: {
         width: 200,
-        height: 40,
+        height: 'auto',
+    },
+    icon: {
+        height: 25,
+        width: 25
     },
     controls: {
         flexDirection: 'row',

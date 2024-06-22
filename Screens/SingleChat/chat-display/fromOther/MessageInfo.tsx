@@ -12,7 +12,7 @@ export default function MessageInfo({
     return (
         <View>
             {v.message?.documentMessage?.caption &&
-                <Text style={{fontSize: 12, paddingTop: 5, paddingHorizontal: 5}}>
+                <Text style={{fontSize: 9, paddingTop: 5, paddingHorizontal: 5, marginBottom: -13}}>
                     {v.message.documentMessage.caption}
                 </Text>
             }
@@ -20,7 +20,7 @@ export default function MessageInfo({
                 justifyContent: 'flex-end',
                 flexDirection: 'row'
             }}>
-                <Text style={{ fontSize: 8, color: "black" }}>
+                <Text style={{ fontSize: 9, color: "black" }}>
                     {/* {format(v.message.messageTimestamp * 1000)} */}
                     {moment(v.message.messageTimestamp).format(
                         "YYYY-MM-DD hh:mm:ss"

@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { Audio } from 'expo-av';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -31,6 +32,9 @@ export default function SingleChatScreens({
     const [image, setImage] = useState("");
     const [socket, setSocket] = useState('')
     const [userId, setUserId] = useState('')
+    // SOUND MESSAGE INSIDE
+    const [sound, setSound] = useState<any>();
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const { userData, device } = route.params
     const {
@@ -50,9 +54,29 @@ export default function SingleChatScreens({
         }
         dispatch(getMessages({ data: body }))
     }
+
+    // CREATE SOUND MESSAGE INSIDE
+    const loadAudio = async () => {
+        const { sound } = await Audio.Sound.createAsync(require('@/assets/audio/sound-message-inside.mp3'));
+        setSound(sound);
+        sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    };
+
+    const onPlaybackStatusUpdate = (status: any) => {
+        if (status.isLoaded) {
+            setIsPlaying(status.isPlaying);
+        }
+    };
+
     useEffect(() => {
+        loadAudio()
         dispatch(setLoader(true))
         loadMessagesAPI()
+        return sound
+            ? () => {
+                sound.unloadAsync();
+            }
+            : undefined;
     }, [])
 
     async function pickImage(): Promise<void> {
@@ -129,6 +153,16 @@ export default function SingleChatScreens({
     }, [recentChats])
 
     // UPDATE MESSAGE ON SOCKET.IO
+    const playSoundToNotif = useCallback(async () => {
+        if (sound) {
+            if (isPlaying) {
+                await sound.replayAsync()
+            } else {
+                await sound.playAsync();
+            }
+        }
+    }, [sound, isPlaying])
+
     useEffect(() => {
         socketClient.on("message-update", (res: any) => {
             console.log("RESPONSE", res);
@@ -140,6 +174,18 @@ export default function SingleChatScreens({
             }
         })
     }, [userData])
+
+    useEffect(() => {
+        socketClient.on("message-update", (res: any) => {
+            if (
+                device?.device_key === res.device_id &&
+                userData?.chat_id?.replace("@s.whatsapp.net", "") === res.jid
+            ) {
+                playSoundToNotif()
+            }
+        })
+    }, [userData, sound, isPlaying])
+    // ---- UPDATE MESSAGE ON SOCKET.IO
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>

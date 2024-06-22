@@ -69,7 +69,7 @@ export default function FromOther({
                 {/* VIDEO */}
                 {v.message?.videoMessage && generateVideo && <VideoMessage generate={generateVideo} />}
                 {/* DOCUMENT FILE */}
-                {v.message?.documentMessage && generateDocument && <Document />}
+                {v.message?.documentMessage && generateDocument && <Document generate={generateDocument}/>}
                 {/* {v.message?.documentMessage && generateAudio && <Document />} */}
                 {/* AUDIO */}
                 {v.message?.audioMessage && generateAudio &&

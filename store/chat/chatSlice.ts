@@ -22,7 +22,8 @@ const initialState = {
     recentChats: [],
     currentPlaySound:{
         mediaKey: ''
-    }
+    },
+    currentPlayVideo: ''
 }
 
 const chatSlice = createSlice({
@@ -40,6 +41,9 @@ const chatSlice = createSlice({
         },
         setCurrentPlaySound: (state, {payload})=>{
             state.currentPlaySound = payload
+        },
+        setCurrentPlayVideo: (state, {payload})=>{
+            state.currentPlayVideo = payload
         },
         addNewMessages: (state, { payload }) => {
             const singleUserChat = (state.singleUserChat as any)?.messages
@@ -76,6 +80,7 @@ export const {
     setRecentChats,
     setSingleUserChat,
     addNewMessages,
-    setCurrentPlaySound
+    setCurrentPlaySound,
+    setCurrentPlayVideo
 } = chatSlice.actions
 export default chatSlice.reducer
