@@ -20,6 +20,9 @@ const initialState = {
     checkNumber: null,
     contacts: [],
     recentChats: [],
+    currentPlaySound:{
+        mediaKey: ''
+    }
 }
 
 const chatSlice = createSlice({
@@ -34,6 +37,9 @@ const chatSlice = createSlice({
         },
         setSingleUserChat: (state, { payload }) => {
             state.singleUserChat = payload
+        },
+        setCurrentPlaySound: (state, {payload})=>{
+            state.currentPlaySound = payload
         },
         addNewMessages: (state, { payload }) => {
             const singleUserChat = (state.singleUserChat as any)?.messages
@@ -69,6 +75,7 @@ export const {
     setLoader,
     setRecentChats,
     setSingleUserChat,
-    addNewMessages
+    addNewMessages,
+    setCurrentPlaySound
 } = chatSlice.actions
 export default chatSlice.reducer

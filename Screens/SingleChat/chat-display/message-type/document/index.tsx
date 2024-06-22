@@ -3,11 +3,13 @@ import React from 'react'
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 
 type Props = {
-    v: any
+    v?: any
+    generate?: any
 }
 
 export default function Document({
-    v
+    v,
+    generate
 }: Props) {
     return (
         <View style={styles.container}>
@@ -15,7 +17,7 @@ export default function Document({
                 <FontAwesome name="file" size={22} color="#21C2C1" />
 
                 <View>
-                    <Text style={styles.title}>{v.message.documentMessage.title}</Text>
+                    <Text style={styles.title}>{v?.message?.documentMessage?.title ?? 'document'}</Text>
                     <Text style={styles.desc}>document - 0.00kb</Text>
                 </View>
             </View>

@@ -31,3 +31,22 @@ export const getMessages = createAsyncThunk(
         }
     }
 );
+
+export const downloadMedia = createAsyncThunk(
+    "team-inbox/media",
+    async ({ id, deviceId }: any, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                `https://new-api.realm.chat/team-inbox/media/${id}/${deviceId}`
+            );
+
+            if (response.data) {
+                return response.data;
+            } else {
+                return rejectWithValue(response.data)
+            }
+        } catch (err) {
+            return rejectWithValue(err);
+        }
+    }
+);

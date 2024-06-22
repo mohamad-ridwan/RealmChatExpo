@@ -16,6 +16,7 @@ export default function ChatDisplay({
     singleUserChat,
     styles
 }: Props) {
+
     return (
         <ScrollView
             ref={scrollRef}

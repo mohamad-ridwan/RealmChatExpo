@@ -1,7 +1,13 @@
-import { View, Image } from 'react-native'
-import React from 'react'
+import { View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import MessageInfo from './MessageInfo'
 import TextMessage from '../message-type/text-message'
+import ImageMessage from '../message-type/image-message'
+import Document from '../message-type/document'
+import { useDispatch } from 'react-redux'
+import { downloadMedia } from '@/store/chat/chatAction'
+import VideoMessage from '../message-type/video-message'
+import AudioMessage from '../message-type/audio-message'
 
 type Props = {
     styles: any
@@ -10,18 +16,42 @@ type Props = {
 
 export default function FromOther({
     styles,
-    v
+    v,
 }: Props) {
+    const [generateImg, setGenerateImg] = useState<any>('')
+    const [generateVideo, setGenerateVideo] = useState<any>('')
+    const [generateDocument, setGenerateDocument] = useState<any>('')
+    const [generateAudio, setGenerateAudio] = useState<any>('')
+
+    const dispatch = useDispatch() as any
+
+    function handleGetType(url: string): void {
+        if (v?.message?.imageMessage) {
+            setGenerateImg(`data:image/jpeg;base64,${url}`)
+        } else if (v?.message?.videoMessage) {
+            setGenerateVideo(`data:video/mp4;base64,${url}`)
+        } else if (v?.message?.documentMessage) {
+            setGenerateDocument(url)
+        } else if (v?.message?.audioMessage) {
+            setGenerateAudio(`data:audio/mpeg;base64,${url}`)
+        }
+    }
+
+    async function generateFiles(): Promise<void> {
+        const result = await dispatch(downloadMedia({ id: v.key.mediaKey, deviceId: v.key.deviceId }))
+        if (result.type === 'team-inbox/media/fulfilled') {
+            handleGetType(result.payload)
+        }
+    }
+
+    useEffect(() => {
+        if (v?.key?.mediaKey) {
+            generateFiles()
+        }
+    }, [v])
+
     return (
         <View style={styles.userMessage}>
-            {/* <Image
-                source={{
-                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNR7FvvC_9X1l2xqi2rdkStAHaSRMmg89O_g&usqp=CAU",
-                }}
-                style={styles.avatarMessage}
-                resizeMode={"contain"}
-            /> */}
-
             <View style={styles.userTextMessageBox}>
                 {/* TEXT */}
                 {v.message?.extendedTextMessage?.text &&
@@ -34,11 +64,20 @@ export default function FromOther({
                         ellipsizeMode="tail"
                     />
                 }
-                {/* DOCUMENT */}
-                {v?.hasMedia ? (
+                {/* IMAGE */}
+                {v.message?.imageMessage && generateImg && <ImageMessage generate={generateImg} />}
+                {/* VIDEO */}
+                {v.message?.videoMessage && generateVideo && <VideoMessage generate={generateVideo} />}
+                {/* DOCUMENT FILE */}
+                {v.message?.documentMessage && generateDocument && <Document />}
+                {/* {v.message?.documentMessage && generateAudio && <Document />} */}
+                {/* AUDIO */}
+                {v.message?.audioMessage && generateAudio &&
+                    <AudioMessage
+                        urlAudio={generateAudio}
+                        v={v}
+                    />}
 
-                    <Image source={{ uri: `data: ${v.media.mimetype};base64,${v.media.data}` }} style={{ height: 100 }} />
-                ) : (null)}
                 {/* MESSAGE INFO */}
                 <MessageInfo v={v} />
             </View>
