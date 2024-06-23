@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "RealmChatExpo",
-    "slug": "RealmChatExpo",
+    "slug": "realmchatexpo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -34,7 +34,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.udexmedia.realmchat",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -44,10 +49,30 @@
     "plugins": [
       "expo-router",
       "expo-localization",
-      "expo-av"
+      "expo-av",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/favicon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "sounds": [
+            "./assets/audio/notif.wav"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f5d34517-13ed-4d6c-8771-c1fdf1767df1"
+      }
+    },
+    "owner": "mohamad_ridwan"
   }
 }
