@@ -24,7 +24,8 @@
       "buildNumber": "1.0.0",
       "infoPlist": {
         "UIBackgroundModes": [
-          "audio"
+          "audio",
+          "remote-notification"
         ]
       }
     },
@@ -37,7 +38,9 @@
       "versionCode": 1,
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SCHEDULE_EXACT_ALARM"
       ],
       "googleServicesFile": "./google-services.json"
     },
