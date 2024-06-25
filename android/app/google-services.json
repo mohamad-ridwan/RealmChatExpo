@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663011302692",
+    "project_id": "realmchatexpo",
+    "storage_bucket": "realmchatexpo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663011302692:android:c2ab6a921d00a0328567b1",
+        "android_client_info": {
+          "package_name": "com.udexmedia.realmchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvvpOSTiYOGlhjHrxMZ4NZnhag7QJkiiI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

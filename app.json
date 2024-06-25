@@ -2,6 +2,7 @@
   "expo": {
     "name": "RealmChatExpo",
     "slug": "realmchatexpo",
+    "sdkVersion": "34.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -62,6 +63,19 @@
           "sounds": [
             "./assets/audio/notif.wav"
           ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "13.4"
+          }
         }
       ]
     ],
