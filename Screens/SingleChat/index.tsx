@@ -28,6 +28,32 @@ Notifications.setNotificationHandler({
     }),
 });
 
+const notificationCategories = [
+    {
+        identifier: 'message',
+        actions: [
+            {
+                identifier: 'markAsRead',
+                buttonTitle: 'Mark as Read',
+                options: {
+                    opensAppToForeground: true,
+                },
+            },
+            {
+                identifier: 'reply',
+                buttonTitle: 'Reply',
+                textInput: {
+                    submitButtonTitle: 'Send',
+                    placeholder: 'Type your reply...',
+                },
+                options: {
+                    opensAppToForeground: true,
+                },
+            },
+        ],
+    },
+];
+
 async function sendPushNotification(expoPushToken: string) {
     const message = {
         to: expoPushToken,
@@ -46,65 +72,6 @@ async function sendPushNotification(expoPushToken: string) {
         },
         body: JSON.stringify(message),
     });
-}
-
-function handleRegistrationError(errorMessage: string) {
-    alert(errorMessage);
-    throw new Error(errorMessage);
-}
-
-async function schedulePushNotification() {
-    await Notifications.scheduleNotificationAsync({
-        content: {
-            title: "You've got mail! 📬",
-            body: 'Here is the notification body',
-            data: { data: 'goes here', test: { test1: 'more data' } },
-            sound: true
-        },
-        trigger: { seconds: 2 },
-    });
-}
-
-async function registerForPushNotificationsAsync() {
-    if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-        });
-    }
-
-    if (Device.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-        }
-        if (finalStatus !== 'granted') {
-            handleRegistrationError('Permission not granted to get push token for push notification!');
-            return;
-        }
-        const projectId =
-            Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-        if (!projectId) {
-            handleRegistrationError('Project ID not found');
-        }
-        try {
-            const pushTokenString = (
-                await Notifications.getExpoPushTokenAsync({
-                    projectId,
-                })
-            ).data;
-            console.log(pushTokenString);
-            return pushTokenString;
-        } catch (e: unknown) {
-            handleRegistrationError(`${e}`);
-        }
-    } else {
-        handleRegistrationError('Must use physical device for push notifications');
-    }
 }
 
 export default function SingleChatScreens({
@@ -131,6 +98,7 @@ export default function SingleChatScreens({
     const [notification, setNotification] = useState<Notifications.Notification | undefined>(
         undefined
     );
+    const [isUpdateToken, setIsUpdateToken] = useState<boolean>(false)
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
 
@@ -261,9 +229,94 @@ export default function SingleChatScreens({
         }
     }, [sound, isPlaying])
 
+    async function scheduleNotification() {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "You've got mail! 📬",
+                body: 'Swipe down to see more options.',
+                categoryIdentifier: 'message', // Specify the category identifier
+            },
+            trigger: {
+                seconds: 2,
+            },
+        });
+    }
+
+    useEffect(() => {
+        const subscription = Notifications.addPushTokenListener((token) => {
+            console.log('new token', token)
+        });
+        return () => subscription.remove();
+    }, []);
+
+    function handleRegistrationError(errorMessage: string) {
+        alert(errorMessage);
+        throw new Error(errorMessage);
+    }
+    
+    async function schedulePushNotification() {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "You've got mail! 📬",
+                body: 'Here is the notification body',
+                data: { data: 'goes here', test: { test1: 'more data' } },
+                sound: true
+            },
+            trigger: { seconds: 2 },
+        });
+    }
+    
+    // async function getCategoryNotifications(): Promise<void> {
+    //     await Notifications.setNotificationCategoryAsync(notificationCategories[0].identifier, notificationCategories[0].actions);
+    // }
+    
+    async function registerForPushNotificationsAsync() {
+        if (Platform.OS === 'android') {
+            Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.HIGH,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+                sound: 'notif.wav'
+            });
+        }
+    
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                handleRegistrationError('Permission not granted to get push token for push notification!');
+                return;
+            }
+            const projectId =
+                Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+            if (!projectId) {
+                handleRegistrationError('Project ID not found');
+            }
+            try {
+                const pushTokenString = (
+                    await Notifications.getExpoPushTokenAsync()
+                ).data;
+                console.log(pushTokenString);
+    
+                return pushTokenString;
+            } catch (e: unknown) {
+                handleRegistrationError(`${e}`);
+            }
+        } else {
+            handleRegistrationError('Must use physical device for push notifications');
+        }
+    }
+
     useEffect(() => {
         registerForPushNotificationsAsync()
-            .then(token => setExpoPushToken(token ?? ''))
+            .then(token => {
+                setExpoPushToken(token ?? '')
+            })
             .catch((error: any) => setExpoPushToken(`${error}`));
 
         if (Platform.OS === 'android') {
@@ -273,9 +326,16 @@ export default function SingleChatScreens({
             setNotification(notification);
         });
 
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
-        });
+        // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        //     const actionIdentifier = response.actionIdentifier;
+        //     const userText = response.notification.request.content
+
+        //     if (actionIdentifier === 'markAsRead') {
+        //         console.log('Notification marked as read');
+        //     } else if (actionIdentifier === 'reply') {
+        //         console.log('User replied:', response);
+        //     }
+        // });
 
         return () => {
             notificationListener.current &&
