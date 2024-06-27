@@ -2,6 +2,7 @@ import { View, StyleSheet, Platform } from 'react-native'
 import { Audio } from 'expo-av';
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
+import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
@@ -145,21 +146,38 @@ export default function SingleChatScreens({
             : undefined;
     }, [])
 
+    // IMAGE PICKER
     async function pickImage(): Promise<void> {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1,
+            base64: true
+        });
 
+        if (!result.canceled) {
+            if(result.assets[0]?.base64){
+                setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
+            }else{
+                setImage(result.assets[0].uri);
+            }
+        }
     }
+    // -----IMAGE PICKER-----
 
     async function onSendMessages(): Promise<void> {
-        if (message.trim() === '') {
-            return
-        }
+        // if (message.trim() === '') {
+        //     return
+        // }
 
         const _data = {
             accountid: device?.device_key,
             number: userData?.chat_id,
             message: message,
             type: 'text',
-            fileUrl: null,
+            fileUrl: image !== "" ? image : null,
             messageId: `${Math.random().toString(36).substring(2, 36)}${Math.random()
                 .toString(36)
                 .substring(2, 36)}${Math.random()
@@ -253,7 +271,7 @@ export default function SingleChatScreens({
         alert(errorMessage);
         throw new Error(errorMessage);
     }
-    
+
     async function schedulePushNotification() {
         await Notifications.scheduleNotificationAsync({
             content: {
@@ -265,11 +283,11 @@ export default function SingleChatScreens({
             trigger: { seconds: 2 },
         });
     }
-    
+
     // async function getCategoryNotifications(): Promise<void> {
     //     await Notifications.setNotificationCategoryAsync(notificationCategories[0].identifier, notificationCategories[0].actions);
     // }
-    
+
     async function registerForPushNotificationsAsync() {
         if (Platform.OS === 'android') {
             Notifications.setNotificationChannelAsync('default', {
@@ -280,7 +298,7 @@ export default function SingleChatScreens({
                 sound: 'notif.wav'
             });
         }
-    
+
         if (Device.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
@@ -301,8 +319,8 @@ export default function SingleChatScreens({
                 const pushTokenString = (
                     await Notifications.getExpoPushTokenAsync()
                 ).data;
-                console.log(pushTokenString);
-    
+                // console.log(pushTokenString);
+
                 return pushTokenString;
             } catch (e: unknown) {
                 handleRegistrationError(`${e}`);
@@ -347,10 +365,10 @@ export default function SingleChatScreens({
 
     useEffect(() => {
         socketClient.on("message-update", (res: any) => {
-            console.log("RESPONSE", res);
+            // console.log("RESPONSE", res);
             if (
                 device?.device_key === res.device_id &&
-                userData?.chat_id?.replace("@s.whatsapp.net", "") === res.jid
+                (Number(userData?.chat_id?.replace("@s.whatsapp.net", "")) === Number(res.jid))
             ) {
                 dispatch(addNewMessages(res.messages))
             }

@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
-import { userLogin } from "./authAction"
+import { getProfile, userLogin } from "./authAction"
 
 const initialState = {
-    user: "",
+    user: {},
     isLogin: false,
     loginErr: "",
     isMatch_pass: "",
@@ -35,6 +35,13 @@ const authSlice = createSlice({
     extraReducers(builder) {
         builder.addCase(userLogin.fulfilled, (state, action) => {
             state.isLogin = action.payload
+        }),
+        builder.addCase(getProfile.fulfilled, (state, action) => {
+            state.user = action.payload.user
+            state.isLogin = true
+        }),
+        builder.addCase(getProfile.rejected, (state, action) => {
+            state.isLogin = false
         })
     },
 })

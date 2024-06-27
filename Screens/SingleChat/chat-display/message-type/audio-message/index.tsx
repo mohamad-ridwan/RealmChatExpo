@@ -70,8 +70,8 @@ export default function AudioMessage({
 
     const pauseAudio = async () => {
         if (sound) {
-            setIsPlaying(false)
             await sound.pauseAsync();
+            setIsPlaying(false)
         }
     }
 
@@ -85,10 +85,6 @@ export default function AudioMessage({
         if (sound) {
             const seekPosition = value;
             await sound.setPositionAsync(seekPosition);
-            setPosition(seekPosition);
-            if (isPlaying) {
-                setIsPlaying(true)
-            }
         }
     };
 
@@ -111,7 +107,7 @@ export default function AudioMessage({
     useEffect(() => {
         let interval: any = null;
         if (isPlaying) {
-            interval = setInterval(updatePosition, 0);
+            interval = setInterval(updatePosition, 100);
         } else if (!isPlaying && interval) {
             clearInterval(interval);
         }
@@ -126,7 +122,7 @@ export default function AudioMessage({
     useEffect(() => {
         if (position !== null && position === duration) {
             setIsPlaying(false)
-            setPosition(0)
+            // setPosition(0)
             stopAudio()
         }
     }, [position, duration])

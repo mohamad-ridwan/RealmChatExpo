@@ -8,6 +8,11 @@ import LoginScreen from '@/Screens/Login'
 import AllChatScreen from '@/Screens/AllChat'
 import SingleChatScreens from '@/Screens/SingleChat'
 import socketClient from '@/services/socket'
+import ContactsScreen from '@/Screens/Contacts'
+import SettingsScreen from '@/Screens/Settings'
+import DeviceScreens from '@/Screens/Devices'
+import ProfileSettingScreen from '@/Screens/ProfileSetting'
+import CameraScreen from '@/Screens/Camera'
 
 const Stack = createStackNavigator();
 
@@ -38,6 +43,11 @@ export default function Navigation() {
             <Stack.Screen name='Login' component={LoginScreen} />
             <Stack.Screen name='AllChat' component={AllChatScreen} />
             <Stack.Screen name='SingleChat' component={SingleChatScreens} />
+            <Stack.Screen name='Contacts' component={ContactsScreen} />
+            <Stack.Screen name='Settings' component={SettingsScreen} />
+            <Stack.Screen name='Devices' component={DeviceScreens} />
+            <Stack.Screen name='ProfileSetting' component={ProfileSettingScreen} />
+            <Stack.Screen name='Camera' component={CameraScreen} />
         </Stack.Navigator>
     )
 }

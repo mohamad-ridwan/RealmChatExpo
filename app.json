@@ -2,7 +2,6 @@
   "expo": {
     "name": "RealmChatExpo",
     "slug": "realmchatexpo",
-    "sdkVersion": "34.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
@@ -84,6 +83,20 @@
           "ios": {
             "deploymentTarget": "13.4"
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
         }
       ]
     ],

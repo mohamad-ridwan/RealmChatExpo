@@ -3,13 +3,15 @@ import authSlice from './auth/authSlice'
 import themeSlice from './theme/themeSlice'
 import chatSlice from './chat/chatSlice'
 import deviceSlice from './device/deviceSlice'
+import contactSlice from './contact/contactSlice'
 
 export const store = configureStore({
   reducer: {
     authSlice,
     themeSlice,
     chatSlice,
-    deviceSlice
+    deviceSlice,
+    contactSlice
   },
   middleware: (getDefaultMiddleware)=>getDefaultMiddleware({serializableCheck: false}),
 })

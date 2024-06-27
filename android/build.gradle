@@ -17,12 +17,14 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath('com.google.gms:google-services:4.3.3')
         classpath('com.android.tools.build:gradle:8.2.1')
         classpath('com.facebook.react:react-native-gradle-plugin')
         classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23')
+        classpath('com.github.dcendents:android-maven-gradle-plugin:2.1')
     }
 }
 

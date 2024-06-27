@@ -45,12 +45,9 @@ export default function AllChatScreen({
 
   const error = ''
 
-  const customerId: string = '230474516807309'
-
   const onRefresh = React.useCallback(() => {
     console.log('refresh')
     dispatch(setLoader(true))
-    dispatch(getChats({ id: customerId }))
 
   }, []);
 
@@ -65,7 +62,7 @@ export default function AllChatScreen({
   }, [])
 
   const getDevice = ()=>{
-    const findDevice = devices.find((item: any)=>item.device_key === customerId)
+    const findDevice = devices[0]
     dispatch(setDevice(findDevice))
   }
 
