@@ -100,6 +100,7 @@ export default function SingleChatScreens({
         undefined
     );
     const [isUpdateToken, setIsUpdateToken] = useState<boolean>(false)
+    const [messageIsUpdate, setMessageIsUpdate] = useState<any>(null)
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
 
@@ -364,8 +365,6 @@ export default function SingleChatScreens({
         };
     }, []);
 
-
-
     const chat_id = useMemo(() => {
         const jid = singleUserChat?.jid
         const chat_id = jid?.replace("@s.whatsapp.net", "")
@@ -374,7 +373,6 @@ export default function SingleChatScreens({
     }, [])
 
     const updateMessage = useCallback((res: any, chat_id: any) => {
-        console.log('chat_id', `${chat_id} - ${res.jid}`)
         if (
             device?.device_key === res.device_id &&
             // (Number(userData?.chat_id?.replace("@s.whatsapp.net", "")) === Number(res.jid))
@@ -384,9 +382,15 @@ export default function SingleChatScreens({
         }
     }, [])
 
+    useEffect(()=>{
+        if(messageIsUpdate){
+            updateMessage(messageIsUpdate, chat_id)
+        }
+    }, [messageIsUpdate])
+
     useEffect(() => {
         socketClient.on("message-update", ((res: any) => {
-            updateMessage(res, chat_id)
+            setMessageIsUpdate(res)
         }))
     }, [])
 

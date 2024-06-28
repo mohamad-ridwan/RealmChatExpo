@@ -85,6 +85,9 @@ export default function AudioMessage({
         if (sound) {
             const seekPosition = value;
             await sound.setPositionAsync(seekPosition);
+            if(isPlaying){
+                setIsPlaying(true)
+            }
         }
     };
 

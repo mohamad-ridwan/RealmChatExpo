@@ -12,7 +12,6 @@ import ContactsScreen from '@/Screens/Contacts'
 import SettingsScreen from '@/Screens/Settings'
 import DeviceScreens from '@/Screens/Devices'
 import ProfileSettingScreen from '@/Screens/ProfileSetting'
-import CameraScreen from '@/Screens/Camera'
 
 const Stack = createStackNavigator();
 
@@ -47,7 +46,7 @@ export default function Navigation() {
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='Devices' component={DeviceScreens} />
             <Stack.Screen name='ProfileSetting' component={ProfileSettingScreen} />
-            <Stack.Screen name='Camera' component={CameraScreen} />
+            {/* <Stack.Screen name='Camera' component={CameraScreen} /> */}
         </Stack.Navigator>
     )
 }
