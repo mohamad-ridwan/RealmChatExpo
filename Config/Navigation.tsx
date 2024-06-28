@@ -46,7 +46,6 @@ export default function Navigation() {
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='Devices' component={DeviceScreens} />
             <Stack.Screen name='ProfileSetting' component={ProfileSettingScreen} />
-            {/* <Stack.Screen name='Camera' component={CameraScreen} /> */}
         </Stack.Navigator>
     )
 }
