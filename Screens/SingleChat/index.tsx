@@ -4,7 +4,7 @@ import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -104,6 +104,7 @@ export default function SingleChatScreens({
     const responseListener = useRef<Notifications.Subscription>();
 
     const { userData, device } = route.params
+    const { devices } = useSelector((state: RootState) => state.deviceSlice)
     const {
         singleUserChat: currentSingleUserChat,
         loader,
@@ -117,7 +118,7 @@ export default function SingleChatScreens({
     function loadMessagesAPI(): void {
         const body = {
             deviceId: device?.device_key ?? null,
-            chatId: userData.chat_id
+            chatId: singleUserChat?.jid
         }
         dispatch(getMessages({ data: body }))
     }
@@ -149,21 +150,21 @@ export default function SingleChatScreens({
     // IMAGE PICKER
     async function pickImage(): Promise<void> {
         // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1,
-            base64: true
-        });
+        // let result = await ImagePicker.launchImageLibraryAsync({
+        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+        //     allowsEditing: true,
+        //     aspect: [4, 4],
+        //     quality: 1,
+        //     base64: true
+        // });
 
-        if (!result.canceled) {
-            if(result.assets[0]?.base64){
-                setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
-            }else{
-                setImage(result.assets[0].uri);
-            }
-        }
+        // if (!result.canceled) {
+        //     if (result.assets[0]?.base64) {
+        //         setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
+        //     } else {
+        //         setImage(result.assets[0].uri);
+        //     }
+        // }
     }
     // -----IMAGE PICKER-----
 
@@ -222,19 +223,19 @@ export default function SingleChatScreens({
         setMessage('')
     }
 
-    useEffect(() => {
-        if (recentChats) {
-            if (singleUserChat) {
-                let _singleUserChat = {
-                    ...recentChats.find((e: any) => e.jid === userData?.chat_id),
-                };
+    // useEffect(() => {
+    //     if (recentChats) {
+    //         if (singleUserChat) {
+    //             let _singleUserChat = {
+    //                 ...recentChats.find((e: any) => e.jid === userData?.chat_id),
+    //             };
 
-                if (_singleUserChat) {
-                    dispatch(setSingleUserChat(_singleUserChat));
-                }
-            }
-        }
-    }, [recentChats])
+    //             if (_singleUserChat) {
+    //                 dispatch(setSingleUserChat(_singleUserChat));
+    //             }
+    //         }
+    //     }
+    // }, [recentChats])
 
     // UPDATE MESSAGE ON SOCKET.IO
     const playSoundToNotif = useCallback(async () => {
@@ -363,17 +364,31 @@ export default function SingleChatScreens({
         };
     }, []);
 
+
+
+    const chat_id = useMemo(() => {
+        const jid = singleUserChat?.jid
+        const chat_id = jid?.replace("@s.whatsapp.net", "")
+
+        return chat_id
+    }, [])
+
+    const updateMessage = useCallback((res: any, chat_id: any) => {
+        console.log('chat_id', `${chat_id} - ${res.jid}`)
+        if (
+            device?.device_key === res.device_id &&
+            // (Number(userData?.chat_id?.replace("@s.whatsapp.net", "")) === Number(res.jid))
+            chat_id == res.jid
+        ) {
+            dispatch(addNewMessages(res.messages))
+        }
+    }, [])
+
     useEffect(() => {
-        socketClient.on("message-update", (res: any) => {
-            // console.log("RESPONSE", res);
-            if (
-                device?.device_key === res.device_id &&
-                (Number(userData?.chat_id?.replace("@s.whatsapp.net", "")) === Number(res.jid))
-            ) {
-                dispatch(addNewMessages(res.messages))
-            }
-        })
-    }, [userData])
+        socketClient.on("message-update", ((res: any) => {
+            updateMessage(res, chat_id)
+        }))
+    }, [])
 
     // useEffect(() => {
     //     socketClient.on("message-update", (res: any) => {

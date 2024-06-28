@@ -1,10 +1,12 @@
-import { Button, StyleSheet, View } from 'react-native'
+import { Alert, Button, StyleSheet, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import * as FileSystem from 'expo-file-system';
 import { ResizeMode, Video } from 'expo-av'
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { setCurrentPlayVideo } from '@/store/chat/chatSlice';
+import CircularProgress from 'react-native-circular-progress-indicator';
 
 type Props = {
   v?: any
@@ -17,8 +19,10 @@ export default function VideoMessage({
 }: Props) {
   const [status, setStatus] = React.useState<any>({});
   const [videoId, setVideoId] = useState<string>('')
+  // downloaded file
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
-  const {currentPlayVideo} = useSelector((state: RootState)=>state.chatSlice)
+  const { currentPlayVideo } = useSelector((state: RootState) => state.chatSlice)
   const dispatch = useDispatch() as any
   const video = useRef<any>(null)
 
@@ -40,18 +44,46 @@ export default function VideoMessage({
   useEffect(() => {
     setVideoId(randomId())
 
-    return ()=>dispatch(setCurrentPlayVideo(''))
+    return () => dispatch(setCurrentPlayVideo(''))
   }, [])
 
-  useEffect(()=>{
-    if(
-      currentPlayVideo !== '' && 
+  useEffect(() => {
+    if (
+      currentPlayVideo !== '' &&
       currentPlayVideo !== videoId &&
       status?.isPlaying
-    ){
+    ) {
       video.current.pauseAsync()
     }
   }, [currentPlayVideo, videoId, status, video])
+
+  async function handleDownloadVideo(): Promise<void> {
+    const uri = `https://new-api.realm.chat/team-inbox/media/${v.key.mediaKey}/${v.key.deviceId}`;
+    const fileUri = FileSystem.documentDirectory + 'video.mp4';
+
+    const downloadResumable = FileSystem.createDownloadResumable(
+      uri,
+      fileUri,
+      {},
+      downloadProgressCallback
+    );
+
+    try {
+      const uri = await downloadResumable.downloadAsync();
+      // setFileUri(uri);
+      Alert.alert('Download completed')
+      setDownloadProgress(0)
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const downloadProgressCallback = (downloadProgress: any) => {
+    const progress =
+      downloadProgress.totalBytesWritten /
+      downloadProgress.totalBytesExpectedToWrite;
+    setDownloadProgress(progress);
+  };
 
   return (
     <View style={styles.container}>
@@ -64,14 +96,45 @@ export default function VideoMessage({
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
         onPlaybackStatusUpdate={status => setStatus(() => status)}
+        volume={1.0}
+        rate={1.0}
       />
-      <View style={styles.buttons}>
-        <Button
-          title={status.isPlaying ? 'Pause' : 'Play'}
-          color="green"
-          onPress={() => handlePlayBtn()}
-        />
-        {/* <MaterialIcons name="download-for-offline" size={24} color="green" /> */}
+      <View style={{
+        flexDirection: 'row',
+        // alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <View style={styles.buttons}>
+          <Button
+            title={status.isPlaying ? 'Pause' : 'Play'}
+            color="green"
+            onPress={() => handlePlayBtn()}
+          />
+        </View>
+        <View style={{
+          width: '45%'
+        }}>
+          <View style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            {Math.floor(downloadProgress * 100) > 0 ?
+              <CircularProgress
+                value={Math.floor(downloadProgress * 100)}
+                maxValue={100}
+                radius={15}
+                progressValueColor={'green'}
+                activeStrokeColor='green'
+              />
+              :
+              <Button
+                title="Download"
+                color="green"
+                onPress={handleDownloadVideo}
+              />
+            }
+          </View>
+        </View>
       </View>
     </View>
   )
@@ -82,6 +145,7 @@ var styles = StyleSheet.create({
     height: 'auto',
   },
   buttons: {
+    width: '50%'
     // flexDirection: 'row',
     // justifyContent: 'space-between',
     // alignItems: 'center'

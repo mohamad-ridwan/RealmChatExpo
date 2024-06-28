@@ -1,4 +1,4 @@
-import { Image } from 'react-native'
+import { Image, Text, View } from 'react-native'
 import React from 'react'
 
 type Props = {
@@ -11,6 +11,13 @@ export default function ImageMessage({
     generate
 }: Props) {
     return (
-        <Image source={{ uri: generate ?? v.message.imageMessage.url }} style={{ width: 'auto', height: 200, resizeMode: 'cover' }} />
+        <View>
+            <Image source={{ uri: generate ?? v.message.imageMessage.url }} style={{ width: 'auto', height: 200, resizeMode: 'cover' }} />
+            {v?.message?.imageMessage?.caption &&
+                <Text style={{ paddingTop: 5, paddingHorizontal: 5, marginBottom: -13 }}>
+                    {v.message.imageMessage?.caption}
+                </Text>
+            }
+        </View>
     )
 }

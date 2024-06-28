@@ -11,11 +11,6 @@ export default function MessageInfo({
 }: Props) {
     return (
         <View>
-            {v.message?.documentMessage?.caption &&
-                <Text style={{fontSize: 9, paddingTop: 5, paddingHorizontal: 5, marginBottom: -13}}>
-                    {v.message.documentMessage.caption}
-                </Text>
-            }
             <View style={{
                 justifyContent: 'flex-end',
                 flexDirection: 'row'

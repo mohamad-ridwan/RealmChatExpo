@@ -27,7 +27,7 @@ export default function Navigation() {
 
             devices.map((item: any) => {
                 _devices.push(item.device_key);
-            });
+            })
 
             socketClient.emit("device-list", { id: socketClient.id, devices: _devices });
         }

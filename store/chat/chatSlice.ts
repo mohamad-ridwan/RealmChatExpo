@@ -45,6 +45,12 @@ const chatSlice = createSlice({
         setCurrentPlayVideo: (state, {payload})=>{
             state.currentPlayVideo = payload
         },
+        setJid: (state, {payload})=>{
+            state.singleUserChat = {
+                ...state.singleUserChat,
+                jid: payload
+            }
+        },
         addNewMessages: (state, { payload }) => {
             const singleUserChat = (state.singleUserChat as any)?.messages
             const _messages = [...singleUserChat];
@@ -52,8 +58,11 @@ const chatSlice = createSlice({
 
             _messages?.unshift(payload);
 
-            _listMessages.messages = _messages;
-            state.singleUserChat = _listMessages
+            // _listMessages.messages = _messages;
+            state.singleUserChat = {
+                ...state.singleUserChat,
+                messages: _messages
+            }
         }
     },
     extraReducers(builder) {
@@ -66,7 +75,10 @@ const chatSlice = createSlice({
                 state.loader = false
             }),
             builder.addCase(getMessages.fulfilled, (state, action) => {
-                state.singleUserChat = action.payload
+                state.singleUserChat ={
+                    ...state.singleUserChat,
+                    ...action.payload
+                }
                 state.loader = false
             })
         builder.addCase(getMessages.rejected, (state, action) => {
@@ -81,6 +93,7 @@ export const {
     setSingleUserChat,
     addNewMessages,
     setCurrentPlaySound,
-    setCurrentPlayVideo
+    setCurrentPlayVideo,
+    setJid
 } = chatSlice.actions
 export default chatSlice.reducer

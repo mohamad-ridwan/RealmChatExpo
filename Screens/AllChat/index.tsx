@@ -10,9 +10,10 @@ import { StatusBar } from 'expo-status-bar';
 import i18n from '@/utils';
 import ChatItem from '@/components/ChatItem';
 import { getChats } from '@/store/chat/chatAction';
-import { setLoader, setRecentChats } from '@/store/chat/chatSlice';
+import { setJid, setLoader, setRecentChats } from '@/store/chat/chatSlice';
 import { getDevices } from '@/store/device/deviceAction';
 import { setDevice } from '@/store/device/deviceSlice';
+import socketClient from '@/services/socket';
 
 type Props = {
   navigation: any
@@ -32,10 +33,8 @@ export default function AllChatScreen({
   const [modalVisible, setModalVisible] = useState(false);
   const [activePage, setActivePage] = useState(1)
   const [itemsCountPerPage, setItemsCountPerPage] = useState(20)
-
   const [flatlistReady, setFlatlistReady] = useState(false)
-  const [socket, setSocket] = useState('')
-  const [userId, setUserId] = useState('')
+  const [socket, setSocket] = useState<any>('')
 
   const isDark = useSelector((state: RootState) => state.themeSlice.isDark)
   const { recentChats, loader } = useSelector((state: RootState) => state.chatSlice)
@@ -61,21 +60,21 @@ export default function AllChatScreen({
     handleGetDevices()
   }, [])
 
-  const getDevice = ()=>{
+  const getDevice = () => {
     const findDevice = devices[0]
     dispatch(setDevice(findDevice))
   }
 
-  useEffect(()=>{
-    if(devices.length > 0){
+  useEffect(() => {
+    if (devices.length > 0) {
       getDevice()
     }
   }, [devices])
 
   // get all chats
-  async function handleGetChats():Promise<void>{
+  async function handleGetChats(): Promise<void> {
     const result = await dispatch(getChats({ id: device?.device_key }))
-    if(result.type === 'chat-list2/fulfilled'){
+    if (result.type === 'chat-list2/fulfilled') {
       dispatch(setRecentChats(result.payload))
 
       return
@@ -84,7 +83,7 @@ export default function AllChatScreen({
   }
 
   useEffect(() => {
-    if(device){
+    if (device) {
       handleGetChats()
     }
   }, [device])
@@ -93,7 +92,6 @@ export default function AllChatScreen({
     const token = await AsyncStorage.getItem(loginSessionName)
     const newToken = JSON.parse(token as string)
     let tokenValue = newToken.token
-    setUserId('')
   }
 
   async function addUser(): Promise<void> {
@@ -242,8 +240,10 @@ export default function AllChatScreen({
                 <ChatItem
                   key={i}
                   data={v}
-                  onPress={() =>
+                  onPress={() => {
+                    dispatch(setJid(v.chat_id))
                     navigation.navigate("SingleChat", { userData: v, device: device })
+                  }
                   }
                 />
               );

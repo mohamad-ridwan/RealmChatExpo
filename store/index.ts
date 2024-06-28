@@ -4,6 +4,7 @@ import themeSlice from './theme/themeSlice'
 import chatSlice from './chat/chatSlice'
 import deviceSlice from './device/deviceSlice'
 import contactSlice from './contact/contactSlice'
+import fileSlice from './file/fileSlice'
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     themeSlice,
     chatSlice,
     deviceSlice,
-    contactSlice
+    contactSlice,
+    fileSlice
   },
   middleware: (getDefaultMiddleware)=>getDefaultMiddleware({serializableCheck: false}),
 })

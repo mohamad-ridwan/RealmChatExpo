@@ -67,9 +67,9 @@ export default function FromOther({
                 {/* IMAGE */}
                 {v.message?.imageMessage && generateImg && <ImageMessage generate={generateImg} />}
                 {/* VIDEO */}
-                {v.message?.videoMessage && generateVideo && <VideoMessage generate={generateVideo} />}
+                {v.message?.videoMessage && generateVideo && <VideoMessage generate={generateVideo} v={v} />}
                 {/* DOCUMENT FILE */}
-                {v.message?.documentMessage && generateDocument && <Document generate={generateDocument}/>}
+                {v.message?.documentMessage && generateDocument && <Document generate={generateDocument} v={v}/>}
                 {/* {v.message?.documentMessage && generateAudio && <Document />} */}
                 {/* AUDIO */}
                 {v.message?.audioMessage && generateAudio &&
