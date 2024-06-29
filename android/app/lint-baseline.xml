@@ -8,7 +8,7 @@
         errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="4"
+            line="6"
             column="34"/>
     </issue>
 
@@ -19,30 +19,8 @@
         errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="10"
+            line="12"
             column="34"/>
-    </issue>
-
-    <issue
-        id="ProtectedPermissions"
-        message="Permission is only granted to system apps"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS&quot;/>"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/debug/AndroidManifest.xml"
-            line="6"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="RedundantLabel"
-        message="Redundant label can be removed"
-        errorLine1="            android:label=&quot;@string/app_name&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/debug/AndroidManifest.xml"
-            line="22"
-            column="13"/>
     </issue>
 
     <issue
@@ -74,19 +52,8 @@
         errorLine2="                                                                                                                                                                                                                                                                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="27"
+            line="30"
             column="303"/>
-    </issue>
-
-    <issue
-        id="IntentFilterExportedReceiver"
-        message="As of Android 12, `android:exported` must be set; use `true` to make the activity \&#xA;available to other apps, and `false` otherwise."
-        errorLine1="        &lt;receiver android:name=&quot;com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver&quot;>"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="50"
-            column="10"/>
     </issue>
 
     <issue
@@ -96,7 +63,7 @@
         errorLine2="                                                                                                                                                                                      ~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="18"
+            line="21"
             column="183"/>
     </issue>
 

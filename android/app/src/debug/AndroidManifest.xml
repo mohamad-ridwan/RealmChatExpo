@@ -1,9 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.udexmedia.realmchat">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"/>
+    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" tools:ignore="ProtectedPermissions"/>
 
     <application
         android:name=".MainApplication"
@@ -13,12 +12,14 @@
         android:allowBackup="false"
         tools:replace="android:allowBackup"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true" tools:targetApi="28" tools:ignore="GoogleAppIndexingWarning" tools:replace="android:usesCleartextTraffic"
+        android:usesCleartextTraffic="true" 
+        tools:targetApi="28" 
+        tools:ignore="GoogleAppIndexingWarning"
         >
 
-        <activity
+        <!-- <activity
             android:name=".MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|uiMode"
             tools:replace="android:configChanges"
             android:label="@string/app_name"
@@ -27,9 +28,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> -->
 
-        <provider
+        <!-- <provider
             android:name="expo.modules.filesystem.FileSystemFileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
@@ -39,11 +40,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"
                 tools:replace="android:resource"/>
-        </provider>
+        </provider> -->
 
         <receiver
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
