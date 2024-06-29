@@ -1,5 +1,6 @@
 import { View, Text, Dimensions, StyleSheet, Modal, TextInput, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import * as Notifications from 'expo-notifications'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginSessionName } from '@/utils/storage';
@@ -40,11 +41,6 @@ export default function AllChatScreen({
   const { devices, device: currentDevice } = useSelector((state: RootState) => state.deviceSlice)
   const device: any = currentDevice
   const dispatch = useDispatch() as any
-
-  // NOTIFICATION CONFIGURE
-  // Must be outside of any component LifeCycle (such as `componentDidMount`).
-  
-  // --------NOTIFICATION CONFIGURE
 
   const error = ''
 
@@ -117,6 +113,27 @@ export default function AllChatScreen({
     //   getAllChat(activePage + 1, itemsCountPerPage);
     // }
   }
+
+  const redirectToSingleChat = useCallback((lastNotificationResponse: any) => {
+    const chat_id = lastNotificationResponse?.notification?.request?.content?.data?.chatId
+    const currentRecentChats = recentChats.find((item: any) => item.chat_id === chat_id)
+    dispatch(setJid(chat_id))
+    navigation.navigate("SingleChat", { userData: currentRecentChats, device: device })
+  }, [recentChats, device])
+
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification?.request?.content?.data?.chatId &&
+      lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER &&
+      recentChats
+    ) {
+      // THIS RESPONSE WILL BE REDIRECT TO SINGLE CHAT
+      // MUNGKIN AKAN SET CHANGE OTHER DEVICE KALAU NOTIFIKASI DARI DEVICE YANG BUKAN SAAT INI DIPILIH
+      redirectToSingleChat(lastNotificationResponse)
+    }
+  }, [lastNotificationResponse]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
@@ -247,6 +264,8 @@ export default function AllChatScreen({
                   onPress={() => {
                     dispatch(setJid(v.chat_id))
                     navigation.navigate("SingleChat", { userData: v, device: device })
+                    console.log('userdata', v)
+                    console.log('device', device)
                   }
                   }
                 />

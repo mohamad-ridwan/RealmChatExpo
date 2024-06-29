@@ -4,8 +4,8 @@ def REACT_NATIVE_VERSION = new File(['node', '--print',"JSON.parse(require('fs')
 
 buildscript {
     ext {
-        googlePlayServicesVersion = "+" // "<Your play services version>" // default: "+"
-        firebaseMessagingVersion = "21.1.0" // "<Your Firebase version>" // default: "21.1.0"
+        // googlePlayServicesVersion = "+" // "<Your play services version>" // default: "+"
+        // firebaseMessagingVersion = "21.1.0" // "<Your Firebase version>" // default: "21.1.0"
 
         buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0'
         minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '23')
