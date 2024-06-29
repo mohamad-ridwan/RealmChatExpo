@@ -65,7 +65,7 @@ export default function FromOther({
                     />
                 }
                 {/* IMAGE */}
-                {v.message?.imageMessage && generateImg && <ImageMessage generate={generateImg} />}
+                {v.message?.imageMessage && generateImg && <ImageMessage generate={generateImg} v={v}/>}
                 {/* VIDEO */}
                 {v.message?.videoMessage && generateVideo && <VideoMessage generate={generateVideo} v={v} />}
                 {/* DOCUMENT FILE */}

@@ -19,7 +19,7 @@ export default function FromMe({
         <View style={styles.contactMessage}>
             <View style={styles.contactTextMessageBox}>
                 {/* TEXT */}
-                {v.message?.extendedTextMessage?.text && <TextMessage v={v} styles={{ marginTop: 5, flex: 1, color: "#fff" }}/>}
+                {v.message?.extendedTextMessage?.text && <TextMessage v={v} styles={{ marginTop: 5, flex: 1, fontSize: 13 }}/>}
                 {/* IMAGE */}
                 {v.message?.imageMessage?.url && <ImageMessage v={v}/>}
                 {/* VIDEO */}

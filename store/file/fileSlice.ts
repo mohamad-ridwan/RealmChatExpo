@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getFiles } from "./fileAction";
 
 const initialState = {
-    files: null
+    files: null,
+    pagination: null
 }
 
 const fileSlice = createSlice({
@@ -14,12 +15,14 @@ const fileSlice = createSlice({
         },
     },
     extraReducers(builder) {
-        builder.addCase(getFiles.fulfilled, (state, action)=>{
+        builder.addCase(getFiles.fulfilled, (state, action) => {
             state.files = action.payload.data
+            state.pagination = action.payload.pagination
         })
-        // builder.addCase(getDevices.rejected, (state, action)=>{
-        //     state.files = null
-        // })
+        builder.addCase(getFiles.rejected, (state, action) => {
+            state.files = null
+            state.pagination = null
+        })
     }
 });
 

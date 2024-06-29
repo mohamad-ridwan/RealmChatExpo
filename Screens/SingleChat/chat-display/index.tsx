@@ -22,11 +22,12 @@ export default function ChatDisplay({
             ref={scrollRef}
             onContentSizeChange={() => scrollRef.current.scrollToEnd({ animated: true })}
         >
-
             {loader ? (
                 <ActivityIndicator size="large" color="#01E05B" />
             ) : (
-                <View>
+                <View style={{
+                    paddingBottom: 20
+                }}>
                     <Text style={{ textAlign: "center" }}>
                         {singleUserChat?.messages?.length === 0 ? "No Recent Chat Found!" : ""}
                     </Text>

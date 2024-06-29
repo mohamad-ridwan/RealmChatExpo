@@ -31,7 +31,7 @@ export default function Header({
     const dispatch = useDispatch() as any
 
     return (
-        <View style={{ padding: 15 }}>
+        <View style={{ padding: 15, backgroundColor: '#F0F2F5' }}>
             <StatusBar />
 
             <View style={styles.head}>

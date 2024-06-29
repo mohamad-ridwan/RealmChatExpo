@@ -1,16 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 
 type Props = {
   name: string
-  image: any
+  icon: any
   isActive: boolean
   onPress:()=>void
 }
 
 export default function FileTypeSelection({
   name,
-  image,
+  icon,
   isActive,
   onPress
 }: Props) {
@@ -21,10 +21,7 @@ export default function FileTypeSelection({
         borderBottomColor: isActive ? '#21C2C1' : 'transparent',
       }}>
         <View style={styles.content}>
-          <Image
-            source={image}
-            style={styles.icon}
-          />
+          {icon}
           <Text style={styles.text}>{name}</Text>
         </View>
       </View>
@@ -51,8 +48,6 @@ const styles = StyleSheet.create({
     color: '#54656F'
   },
   icon:{
-    height: 30,
-    width: 30,
     objectFit: 'cover'
   }
 })

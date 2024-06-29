@@ -85,7 +85,7 @@ export default function Document({
                 </TouchableOpacity>
             </View>
             {v?.message?.documentMessage?.caption &&
-                <Text style={{ paddingTop: 5, paddingHorizontal: 5, marginBottom: -13 }}>
+                <Text style={{ paddingTop: 5, paddingHorizontal: 5, fontSize: 13 }}>
                     {v.message.documentMessage?.caption}
                 </Text>
             }

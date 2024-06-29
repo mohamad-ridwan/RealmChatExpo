@@ -1,6 +1,7 @@
 import { View, StyleSheet, ScrollView } from 'react-native'
 import React, { Dispatch, SetStateAction } from 'react'
 import FileTypeSelection from './FileTypeSelection'
+import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 
 type Props = {
     currentType: string
@@ -14,23 +15,23 @@ export default function TopSection({
     const data = [
         {
             name: 'Image',
-            iconAsset: require('@/assets/icons/file/image.png'),
-            type: 'image'
+            icon: <Entypo name="image-inverted" size={22} color="#FFC107" />,
+            type: 'image',
         },
         {
             name: 'Video',
-            iconAsset: require('@/assets/icons/file/video.png'),
-            type: 'video'
+            icon: <MaterialIcons name="smart-display" size={22} color="#00BCD4" />,
+            type: 'video',
         },
         {
             name: 'Document',
-            iconAsset: require('@/assets/icons/file/document.png'),
-            type: 'document'
+            icon: <MaterialCommunityIcons name="file-document" size={22} color="#8D6E63" />,
+            type: 'document',
         },
         {
             name: 'Audio',
-            iconAsset: require('@/assets/icons/file/audio.png'),
-            type: 'audio'
+            icon: <MaterialIcons name="audio-file" size={22} color="#4AC367" />,
+            type: 'audio',
         },
     ]
 
@@ -43,7 +44,7 @@ export default function TopSection({
                             <FileTypeSelection
                                 key={i}
                                 name={item.name}
-                                image={item.iconAsset}
+                                icon={item.icon}
                                 isActive={item.type === currentType}
                                 onPress={() => setCurrentType(item.type)}
                             />

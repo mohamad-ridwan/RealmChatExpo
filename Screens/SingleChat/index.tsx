@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform } from 'react-native'
+import { View, StyleSheet, Platform, ImageBackground } from 'react-native'
 import { Audio } from 'expo-av';
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
@@ -87,7 +87,6 @@ export default function SingleChatScreens({
     const [message, setMessage] = useState("");
     const [isShowSearch, setIsShowSearch] = useState(false);
     const [searchText, setSearchText] = useState("");
-    const [image, setImage] = useState("");
     const [socket, setSocket] = useState('')
     const [userId, setUserId] = useState('')
     // SOUND MESSAGE INSIDE
@@ -105,6 +104,7 @@ export default function SingleChatScreens({
     const [messageIsUpdate, setMessageIsUpdate] = useState<any>(null)
     // UPLOAD FILE
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [attachment, setAttachment] = useState<any>(null)
 
     const { userData, device } = route.params
     const { devices } = useSelector((state: RootState) => state.deviceSlice)
@@ -182,7 +182,9 @@ export default function SingleChatScreens({
             number: userData?.chat_id,
             message: message,
             type: 'text',
-            fileUrl: image !== "" ? image : null,
+            fileUrl: attachment ?
+                `https://new-client.realm.chat/cloud_storage/${attachment.file_url}`
+                : null,
             messageId: `${Math.random().toString(36).substring(2, 36)}${Math.random()
                 .toString(36)
                 .substring(2, 36)}${Math.random()
@@ -194,24 +196,65 @@ export default function SingleChatScreens({
 
         let res: any = null
 
-        res = {
-            device_id: device?.device_key,
-            jid: userData?.chat_id,
-            messages: {
-                key: {
-                    fromMe: true,
-                    id: _data.messageId,
-                    remoteJid: userData?.chat_id
-                },
-                message: {
-                    extendedTextMessage: {
-                        text: _data.message,
+        function createDataToNewMessage(
+            message: any
+        ): any {
+            res = {
+                device_id: device?.device_key,
+                jid: userData?.chat_id,
+                messages: {
+                    key: {
+                        MetaMessageID: '',
+                        deviceId: device?.device_key,
+                        directMediaLink: '',
+                        fromMe: true,
+                        id: _data.messageId,
+                        isOfficial: true,
+                        participant: userData?.chat_id,
+                        remoteJid: userData?.chat_id
                     },
+                    message,
+                    messageTimestamp: `${moment().unix()}`,
+                    statusText: "PENDING",
+                    status: 1
                 },
-                messageTimestamp: `${moment().unix()}`,
-                status: "PENDING",
-            },
-            status: 0
+            }
+        }
+
+        if (attachment?.file_type === "image") {
+            createDataToNewMessage({
+                imageMessage: {
+                    caption: _data.message,
+                    url: _data.fileUrl
+                },
+            })
+        } else if (attachment?.file_type === "video") {
+            createDataToNewMessage({
+                videoMessage: {
+                    caption: _data.message,
+                    url: _data.fileUrl
+                },
+            })
+        } else if (attachment?.file_type === "document") {
+            createDataToNewMessage({
+                documentMessage: {
+                    title: attachment?.file_url,
+                    url: _data.fileUrl
+                },
+            })
+        } else if (attachment?.file_type === "audio") {
+            createDataToNewMessage({
+                documentMessage: {
+                    title: attachment?.file_url,
+                    url: _data.fileUrl
+                },
+            })
+        } else {
+            createDataToNewMessage({
+                extendedTextMessage: {
+                    text: _data.message,
+                },
+            })
         }
 
         let _singleUserChat = { ...singleUserChat }
@@ -225,6 +268,7 @@ export default function SingleChatScreens({
         }
 
         setMessage('')
+        setAttachment(null)
     }
 
     // useEffect(() => {
@@ -411,36 +455,49 @@ export default function SingleChatScreens({
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>
-            {/* MODAL UPLOAD FILE / SEND FILE */}
-            <UploadFile
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-            />
-            <Header
-                isShowSearch={isShowSearch}
-                styles={styles}
-                setSearchText={setSearchText}
-                setIsShowSearch={setIsShowSearch}
-                navigation={navigation}
-                route={route}
-            />
+            <ImageBackground source={require('@/assets/images/bg-chat.png')} style={{
+                flex: 1,
+            }}>
+                <View style={{
+                    position: 'absolute',
+                    height: '100%',
+                    width: '100%',
+                    zIndex: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+                }}/>
+                {/* MODAL UPLOAD FILE / SEND FILE */}
+                <UploadFile
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    setAttachment={setAttachment}
+                    attachment={attachment}
+                />
+                <Header
+                    isShowSearch={isShowSearch}
+                    styles={styles}
+                    setSearchText={setSearchText}
+                    setIsShowSearch={setIsShowSearch}
+                    navigation={navigation}
+                    route={route}
+                />
 
-            <ChatDisplay
-                scrollRef={scrollRef}
-                loader={loader}
-                singleUserChat={singleUserChat}
-                styles={styles}
-            />
+                <ChatDisplay
+                    scrollRef={scrollRef}
+                    loader={loader}
+                    singleUserChat={singleUserChat}
+                    styles={styles}
+                />
 
-            <Footer
-                styles={styles}
-                message={message}
-                setMessage={setMessage}
-                pickImage={pickImage}
-                onSendMessages={onSendMessages}
-                image={image}
-                setImage={setImage}
-            />
+                <Footer
+                    styles={styles}
+                    message={message}
+                    setMessage={setMessage}
+                    pickImage={pickImage}
+                    onSendMessages={onSendMessages}
+                    attachment={attachment}
+                    setAttachment={setAttachment}
+                />
+            </ImageBackground>
         </View>
     )
 }
@@ -505,14 +562,14 @@ const styles = StyleSheet.create({
     },
 
     userMessage: {
-        marginTop: 5,
-        padding: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 2,
         display: "flex",
         flexDirection: "row",
         alignItems: "flex-end",
     },
     userTextMessageBox: {
-        backgroundColor: "#ddd",
+        backgroundColor: "white",
         padding: 10,
         borderTopEndRadius: 10,
         borderBottomEndRadius: 10,
@@ -529,7 +586,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     contactTextMessageBox: {
-        backgroundColor: "#01E05B",
+        backgroundColor: "#D9FDD3",
         padding: 10,
         borderTopEndRadius: 10,
         borderBottomEndRadius: 0,
@@ -551,32 +608,37 @@ const styles = StyleSheet.create({
     },
     selectedImageBox: {
         padding: 10,
-        backgroundColor: "#e0e0e0",
+        // backgroundColor: "#e0e0e0",
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        marginLeft: 10
     },
     selectedImage: {
         width: 100,
         height: 100,
     },
     sendMessage: {
-        backgroundColor: "#fff",
+        backgroundColor: "#F0F2F5",
         paddingTop: 10,
         paddingBottom: 10,
     },
     messageBox: {
-        backgroundColor: "#EAECF2",
+        // backgroundColor: "#EAECF2",
+        backgroundColor: 'white',
         paddingLeft: 10,
         paddingRight: 10,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
+        borderRadius: 8,
+        width: '80%'
     },
     messageInput: {
-        height: 50,
+        minHeight: 40,
+        maxHeight: 130,
         marginRight: 5,
         marginLeft: 5,
-        flex: 1,
+        width: '100%',
     },
 });

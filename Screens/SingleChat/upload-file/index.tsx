@@ -6,26 +6,38 @@ import FileContent from './file-content'
 type Props = {
     modalVisible: boolean
     setModalVisible: Dispatch<SetStateAction<boolean>>
+    setAttachment: Dispatch<SetStateAction<any>>
+    attachment: any
 }
 
 export default function UploadFile({
     modalVisible,
-    setModalVisible
+    setModalVisible,
+    setAttachment,
+    attachment
 }: Props) {
+
+    function handleClose(): void {
+        setModalVisible(!modalVisible);
+        setAttachment(null)
+    }
+
     return (
         <Modal
             animationType="slide"
             // transparent={true}
             visible={modalVisible}
-            onRequestClose={() => {
-                setModalVisible(!modalVisible);
-            }}
+            onRequestClose={handleClose}
         >
             <View
                 style={styles.container}
             >
-                <Header closeModal={() => setModalVisible(!modalVisible)} />
-                <FileContent/>
+                <Header closeModal={handleClose} />
+                <FileContent
+                    setAttachment={setAttachment}
+                    attachment={attachment}
+                    setModalVisible={setModalVisible}
+                />
             </View>
         </Modal>
     )

@@ -6,16 +6,24 @@ type Props = {
     image: any
     fileName: string
     icon: any
+    onPress: () => void
+    isActive: boolean
 }
 
 export default function Card({
     uri,
     image,
     fileName,
-    icon
+    icon,
+    onPress,
+    isActive
 }: Props) {
     return (
-        <TouchableOpacity style={style.container}>
+        <TouchableOpacity style={{
+            ...style.container,
+            borderColor: isActive ? '#21C2C1' : 'transparent',
+            borderWidth: 1,
+        }} onPress={onPress}>
             {uri ?
                 <Image
                     source={{ uri }}
@@ -29,10 +37,7 @@ export default function Card({
             }
 
             <View style={style.containerInfo}>
-                <Image
-                    source={icon}
-                    style={style.icon}
-                />
+                {icon}
                 <Text style={style.fileName} numberOfLines={2}>{fileName}</Text>
             </View>
         </TouchableOpacity>

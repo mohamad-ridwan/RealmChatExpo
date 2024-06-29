@@ -1,4 +1,4 @@
-import { Alert, Button, StyleSheet, View } from 'react-native'
+import { Alert, Button, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import * as FileSystem from 'expo-file-system';
 import { ResizeMode, Video } from 'expo-av'
@@ -11,11 +11,13 @@ import CircularProgress from 'react-native-circular-progress-indicator';
 type Props = {
   v?: any
   generate?: any
+  fontColor?: string
 }
 
 export default function VideoMessage({
   v,
-  generate
+  generate,
+  fontColor
 }: Props) {
   const [status, setStatus] = React.useState<any>({});
   const [videoId, setVideoId] = useState<string>('')
@@ -112,7 +114,7 @@ export default function VideoMessage({
           />
         </View>
         <View style={{
-          width: '45%'
+          width: '48%'
         }}>
           <View style={{
             justifyContent: 'center',
@@ -127,15 +129,22 @@ export default function VideoMessage({
                 activeStrokeColor='green'
               />
               :
-              <Button
-                title="Download"
-                color="green"
-                onPress={handleDownloadVideo}
-              />
+              <View style={{ width: '100%' }}>
+                <Button
+                  title="Download"
+                  color="green"
+                  onPress={handleDownloadVideo}
+                />
+              </View>
             }
           </View>
         </View>
       </View>
+      {v?.message?.videoMessage?.caption &&
+        <Text style={{ paddingTop: 5, paddingHorizontal: 5, fontSize: 13, color: fontColor }}>
+          {v.message.videoMessage?.caption}
+        </Text>
+      }
     </View>
   )
 }
@@ -145,7 +154,7 @@ var styles = StyleSheet.create({
     height: 'auto',
   },
   buttons: {
-    width: '50%'
+    width: '48%'
     // flexDirection: 'row',
     // justifyContent: 'space-between',
     // alignItems: 'center'
