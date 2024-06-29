@@ -2,7 +2,6 @@ import { View, StyleSheet, Platform } from 'react-native'
 import { Audio } from 'expo-av';
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
-import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
@@ -15,6 +14,7 @@ import socketClient from '@/services/socket';
 import Header from './header';
 import ChatDisplay from './chat-display';
 import Footer from './footer';
+import UploadFile from './upload-file';
 
 type Props = {
     route: any
@@ -103,6 +103,8 @@ export default function SingleChatScreens({
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
     const [messageIsUpdate, setMessageIsUpdate] = useState<any>(null)
+    // UPLOAD FILE
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     const { userData, device } = route.params
     const { devices } = useSelector((state: RootState) => state.deviceSlice)
@@ -150,6 +152,7 @@ export default function SingleChatScreens({
 
     // IMAGE PICKER
     async function pickImage(): Promise<void> {
+        setModalVisible(!modalVisible)
         // No permissions request is necessary for launching the image library
         // let result = await ImagePicker.launchImageLibraryAsync({
         //     mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -408,6 +411,11 @@ export default function SingleChatScreens({
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>
+            {/* MODAL UPLOAD FILE / SEND FILE */}
+            <UploadFile
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+            />
             <Header
                 isShowSearch={isShowSearch}
                 styles={styles}
