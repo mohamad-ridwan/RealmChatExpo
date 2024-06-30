@@ -14,6 +14,7 @@ type Props = {
     setIsShowSearch: Dispatch<SetStateAction<boolean>>
     navigation: any
     route: any
+    token: string
 }
 
 export default function Header({
@@ -22,7 +23,8 @@ export default function Header({
     setSearchText,
     setIsShowSearch,
     navigation,
-    route
+    route,
+    token
 }: Props) {
     const { colors } = useTheme();
 
@@ -79,7 +81,7 @@ export default function Header({
 
                         <View style={styles.middle}>
                             <Text style={{ color: colors.text }}>{userData.push_name ?? userData.chat_id}</Text>
-                            <Text style={styles.message}>Online</Text>
+                            <Text style={styles.message}>{token}</Text>
                         </View>
 
                         <View style={styles.rightSide}>

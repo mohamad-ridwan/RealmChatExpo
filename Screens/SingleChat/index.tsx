@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform, ImageBackground } from 'react-native'
+import { View, StyleSheet, Platform, ImageBackground, Alert } from 'react-native'
 import { Audio } from 'expo-av';
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
@@ -366,9 +366,8 @@ export default function SingleChatScreens({
             }
             try {
                 const pushTokenString = (
-                    await Notifications.getExpoPushTokenAsync()
+                    await Notifications.getExpoPushTokenAsync({projectId})
                 ).data;
-                console.log(pushTokenString);
 
                 return pushTokenString;
             } catch (e: unknown) {
@@ -479,6 +478,7 @@ export default function SingleChatScreens({
                     setIsShowSearch={setIsShowSearch}
                     navigation={navigation}
                     route={route}
+                    token={expoPushToken}
                 />
 
                 <ChatDisplay
