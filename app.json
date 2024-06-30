@@ -32,6 +32,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
+        "backgroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.udexmedia.realmchat",
