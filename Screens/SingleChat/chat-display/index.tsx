@@ -2,6 +2,7 @@ import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
 import FromOther from './fromOther'
 import FromMe from './fromMe'
+import FullScreenViewer from './full-screen-viewer'
 
 type Props = {
     scrollRef: any
@@ -28,6 +29,8 @@ export default function ChatDisplay({
                 <View style={{
                     paddingBottom: 20
                 }}>
+                    {/* Full Screen Viewer */}
+                    <FullScreenViewer />
                     <Text style={{ textAlign: "center" }}>
                         {singleUserChat?.messages?.length === 0 ? "No Recent Chat Found!" : ""}
                     </Text>

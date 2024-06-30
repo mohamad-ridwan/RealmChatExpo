@@ -214,7 +214,7 @@ export default function SingleChatScreens({
                         remoteJid: userData?.chat_id
                     },
                     message,
-                    messageTimestamp: `${moment().unix()}`,
+                    messageTimestamp: new Date().getTime(),
                     statusText: "PENDING",
                     status: 1
                 },

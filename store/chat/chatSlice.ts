@@ -20,10 +20,13 @@ const initialState = {
     checkNumber: null,
     contacts: [],
     recentChats: [],
-    currentPlaySound:{
+    currentPlaySound: {
         mediaKey: ''
     },
-    currentPlayVideo: ''
+    currentPlayVideo: '',
+    isFullScreenViewer: false,
+    activeIdxFullScreenViewer: 0,
+    imagesViewerData: []
 }
 
 const chatSlice = createSlice({
@@ -39,17 +42,26 @@ const chatSlice = createSlice({
         setSingleUserChat: (state, { payload }) => {
             state.singleUserChat = payload
         },
-        setCurrentPlaySound: (state, {payload})=>{
+        setCurrentPlaySound: (state, { payload }) => {
             state.currentPlaySound = payload
         },
-        setCurrentPlayVideo: (state, {payload})=>{
+        setCurrentPlayVideo: (state, { payload }) => {
             state.currentPlayVideo = payload
         },
-        setJid: (state, {payload})=>{
+        setJid: (state, { payload }) => {
             state.singleUserChat = {
                 ...state.singleUserChat,
                 jid: payload
             }
+        },
+        setIsFullScreenViewer: (state, { payload }) => {
+            state.isFullScreenViewer = !state.isFullScreenViewer
+            if (payload) {
+                state.activeIdxFullScreenViewer = payload.index
+            }
+        },
+        setActiveIdxFullScreenViewer: (state, { payload })=>{
+            state.activeIdxFullScreenViewer = payload.index
         },
         addNewMessages: (state, { payload }) => {
             const singleUserChat = (state.singleUserChat as any)?.messages
@@ -63,7 +75,10 @@ const chatSlice = createSlice({
                 ...state.singleUserChat,
                 messages: _messages
             }
-        }
+        },
+        setImagesViewerData: (state, { payload }) => {
+            state.imagesViewerData = payload
+        },
     },
     extraReducers(builder) {
         builder.addCase(getChats.fulfilled, (state, action) => {
@@ -75,15 +90,15 @@ const chatSlice = createSlice({
                 state.loader = false
             }),
             builder.addCase(getMessages.fulfilled, (state, action) => {
-                state.singleUserChat ={
+                state.singleUserChat = {
                     ...state.singleUserChat,
                     ...action.payload
                 }
                 state.loader = false
+            }),
+            builder.addCase(getMessages.rejected, (state, action) => {
+                state.loader = false
             })
-        builder.addCase(getMessages.rejected, (state, action) => {
-            state.loader = false
-        })
     },
 })
 
@@ -94,6 +109,9 @@ export const {
     addNewMessages,
     setCurrentPlaySound,
     setCurrentPlayVideo,
-    setJid
+    setJid,
+    setIsFullScreenViewer,
+    setImagesViewerData,
+    setActiveIdxFullScreenViewer
 } = chatSlice.actions
 export default chatSlice.reducer
