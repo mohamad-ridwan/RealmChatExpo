@@ -1,12 +1,12 @@
-import { Alert, Button, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import * as FileSystem from 'expo-file-system';
 import { ResizeMode, Video } from 'expo-av'
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { setCurrentPlayVideo } from '@/store/chat/chatSlice';
-import CircularProgress from 'react-native-circular-progress-indicator';
+import { setCurrentPlayVideo, setIsFullScreenViewer } from '@/store/chat/chatSlice';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 type Props = {
   v?: any
@@ -21,12 +21,20 @@ export default function VideoMessage({
 }: Props) {
   const [status, setStatus] = React.useState<any>({});
   const [videoId, setVideoId] = useState<string>('')
+  const [isPreloading, setIsPreloading] = useState<boolean>(true)
   // downloaded file
   const [downloadProgress, setDownloadProgress] = useState(0);
 
-  const { currentPlayVideo } = useSelector((state: RootState) => state.chatSlice)
+  const { currentPlayVideo, imagesViewerData } = useSelector((state: RootState) => state.chatSlice)
   const dispatch = useDispatch() as any
   const video = useRef<any>(null)
+
+  function handleClickVideo(): void {
+    if (!isPreloading) {
+      const findIdx = imagesViewerData.findIndex((item: any) => item?.id === v?.key?.id)
+      dispatch(setIsFullScreenViewer({ index: findIdx < 0 ? 0 : findIdx }))
+    }
+  }
 
   const handlePlayBtn = useCallback(() => {
     if (status.isPlaying && status) {
@@ -87,23 +95,81 @@ export default function VideoMessage({
     setDownloadProgress(progress);
   };
 
+  useEffect(()=>{
+    if(generate?.length > 0 || v.message.videoMessage.url){
+      setTimeout(() => {
+        setIsPreloading(false)
+      }, 0);
+    }
+  }, [v, generate])
+
   return (
     <View style={styles.container}>
-      <Video
-        ref={video}
-        style={styles.video}
-        source={{
-          uri: generate ?? v.message.videoMessage.url,
-        }}
-        useNativeControls
-        resizeMode={ResizeMode.CONTAIN}
-        onPlaybackStatusUpdate={status => setStatus(() => status)}
-        volume={1.0}
-        rate={1.0}
-      />
-      <View style={{
+      {isPreloading ?
+        <View style={styles.containerPlaceholder}>
+          <ActivityIndicator
+            animating
+            color={"gray"}
+            size="large"
+          />
+        </View>
+        :
+        <View style={styles.containerVideo}>
+          <Video
+            ref={video}
+            style={styles.video}
+            source={{
+              uri: generate ?? v.message.videoMessage.url,
+            }}
+            resizeMode={ResizeMode.CONTAIN}
+            onPlaybackStatusUpdate={status => setStatus(() => status)}
+            volume={1.0}
+            rate={1.0}
+            // onLoadStart={() => setIsPreloading(true)}
+            // onReadyForDisplay={() => setIsPreloading(false)}
+          />
+          {/* Play button */}
+          <TouchableNativeFeedback
+            onPress={handleClickVideo}
+          >
+            <View style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              zIndex: 1,
+              borderRadius: 3
+            }}>
+              {isPreloading ?
+                <ActivityIndicator
+                  animating
+                  color={"gray"}
+                  size="large"
+                  style={{ flex: 1, zIndex: 1 }}
+                />
+                :
+                <TouchableOpacity>
+                  <View style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    height: 50,
+                    width: 50,
+                    borderRadius: 50,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <FontAwesome5 name="play" size={20} color="white" />
+                  </View>
+                </TouchableOpacity>
+              }
+            </View>
+          </TouchableNativeFeedback>
+        </View>
+      }
+
+      {/* <View style={{
         flexDirection: 'row',
-        // alignItems: 'center',
         justifyContent: 'space-between'
       }}>
         <View style={styles.buttons}>
@@ -113,6 +179,7 @@ export default function VideoMessage({
             onPress={() => handlePlayBtn()}
           />
         </View>
+
         <View style={{
           width: '48%'
         }}>
@@ -139,7 +206,7 @@ export default function VideoMessage({
             }
           </View>
         </View>
-      </View>
+      </View> */}
       {v?.message?.videoMessage?.caption &&
         <Text style={{ paddingTop: 5, paddingHorizontal: 5, fontSize: 13, color: fontColor }}>
           {v.message.videoMessage?.caption}
@@ -149,7 +216,7 @@ export default function VideoMessage({
   )
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     height: 'auto',
   },
@@ -159,8 +226,19 @@ var styles = StyleSheet.create({
     // justifyContent: 'space-between',
     // alignItems: 'center'
   },
+  containerVideo: {
+    position: 'relative',
+  },
   video: {
     height: 200,
     width: 'auto'
+  },
+  containerPlaceholder: {
+    height: 200,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
   }
 });
