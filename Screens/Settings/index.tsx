@@ -1,13 +1,12 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Appearance } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { handleThemeToggle } from '@/store/theme/themeSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import i18n from '@/utils';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { setThemeColor, themeName } from '@/utils/storage';
 
 type Props = {
     navigation: any
@@ -17,18 +16,47 @@ export default function SettingsScreen({
     navigation
 }: Props) {
     const { colors } = useTheme()
-    const [isEnabled, setIsEnabled] = useState<boolean>(false)
+    const colorScheme = useColorScheme();
+    const [isNotification, setIsNotification] = useState<boolean>(false)
 
-    const { isDark } = useSelector((state: RootState) => state.themeSlice)
-
-    const dispatch = useDispatch() as any
-
-    async function toggleSwitch():Promise<void>{
-
+    async function setNotification(): Promise<void> {
+        const currentTheme = await AsyncStorage.getItem(themeName)
+        if (currentTheme === 'true') {
+            setIsNotification(true)
+            return
+        }
+        setIsNotification(false)
     }
 
-    function toggleTheme(): void {
-        dispatch(handleThemeToggle())
+    useEffect(() => {
+        setNotification()
+    }, [])
+
+    async function toggleNotification(): Promise<void> {
+        const currentTheme = await AsyncStorage.getItem(themeName)
+        if (currentTheme === 'true') {
+            await AsyncStorage.setItem(themeName, 'false')
+            setIsNotification(false)
+            return
+        }
+        await AsyncStorage.setItem(themeName, 'true')
+        setIsNotification(true)
+    }
+
+    async function toggleTheme(): Promise<void> {
+        const currentTheme = await AsyncStorage.getItem(themeName)
+        if (currentTheme === 'dark') {
+            Appearance.setColorScheme('light')
+            setThemeColor('light')
+            return
+        }
+        if (currentTheme === 'light') {
+            Appearance.setColorScheme('dark')
+            setThemeColor('dark')
+            return
+        }
+        Appearance.setColorScheme('dark')
+        setThemeColor('dark')
     }
 
     function logOutHandler(): void {
@@ -120,14 +148,14 @@ export default function SettingsScreen({
                         {i18n.t("Settings.Notifications")}
                     </Text>
                     <Switch
-                        trackColor={{ false: "#FFF", true: "#FFF" }}
-                        thumbColor={isEnabled ? "#0EE263" : "#EBEDF3"}
+                        trackColor={{ false: colorScheme === 'dark' ? 'white' : colors.background, true: colorScheme === 'dark' ? 'white' : colors.background }}
+                        thumbColor={isNotification ? "#0EE263" : "#EBEDF3"}
                         ios_backgroundColor="#fff"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        onValueChange={toggleNotification}
+                        value={isNotification}
                     />
                 </View>
-                <View style={styles.settingItem}>
+                {/* <View style={styles.settingItem}>
                     <Text style={{ color: colors.text }}>
                         {i18n.t("Settings.AppNotifications")}
                     </Text>
@@ -138,7 +166,7 @@ export default function SettingsScreen({
                         onValueChange={toggleSwitch}
                         value={false}
                     />
-                </View>
+                </View> */}
             </View>
 
             <View style={styles.setting}>
@@ -154,7 +182,7 @@ export default function SettingsScreen({
                 </View>
                 <View style={[styles.line, { borderBottomColor: colors.text }]} />
 
-                <TouchableOpacity style={styles.settingItem}>
+                {/* <TouchableOpacity style={styles.settingItem}>
                     <Text style={{ color: colors.text }}>
                         {i18n.t("Settings.MoreText")}
                     </Text>
@@ -163,7 +191,8 @@ export default function SettingsScreen({
                         size={24}
                         color={colors.text}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+
                 {/* <TouchableOpacity style={styles.settingItem}>
           <Text style={{ color: colors.text }}>Country</Text>
           <Ionicons
@@ -175,16 +204,17 @@ export default function SettingsScreen({
 
                 <View style={styles.settingItem}>
                     <Text style={{ color: colors.text }}>
-                        {isDark
+                        {colorScheme === 'dark'
                             ? `${i18n.t("Settings.LightMode")}`
-                        : `${i18n.t("Settings.DarkMode")}`}
+                            : `${i18n.t("Settings.DarkMode")}`}
                     </Text>
                     <Switch
                         trackColor={{ false: "#000", true: "#FFF" }}
-                        thumbColor={isDark ? "#FFF" : "#000"}
+                        thumbColor={colorScheme === 'dark' ? "#FFF" : "#000"}
+                        // thumbColor={colorScheme === "dark" ? "#0EE263" : "#EBEDF3"}
                         ios_backgroundColor="#fffs"
                         onValueChange={toggleTheme}
-                        value={isDark}
+                        value={colorScheme === 'dark'}
                     />
                 </View>
             </View>

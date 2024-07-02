@@ -116,6 +116,7 @@ export default function ProfileSettingScreen({
                             value={name}
                             onChangeText={(text) => setName(text)}
                             underlineColorAndroid="transparent"
+                            readOnly
                         />
                     </View>
 
@@ -128,6 +129,7 @@ export default function ProfileSettingScreen({
                             value={userName}
                             onChangeText={(text) => setUserName(text)}
                             underlineColorAndroid="transparent"
+                            readOnly
                         />
                     </View>
 
@@ -140,6 +142,7 @@ export default function ProfileSettingScreen({
                             value={email}
                             onChangeText={(text) => setEmail(text)}
                             underlineColorAndroid="transparent"
+                            readOnly
                         />
                     </View>
 
@@ -152,6 +155,7 @@ export default function ProfileSettingScreen({
                             value={phone}
                             onChangeText={(text) => setPhone(text)}
                             underlineColorAndroid="transparent"
+                            readOnly
                         />
                     </View>
 
@@ -184,14 +188,14 @@ export default function ProfileSettingScreen({
                     </View> */}
                 </View>
             )}
-            <View style={styles.btnContainer}>
+            {/* <View style={styles.btnContainer}>
                 <TouchableOpacity
                     style={styles.loginBtn}
                     onPress={() => updateProfileHandle()}
                 >
                     <Text style={styles.btnText}> {i18n.t("Profile.SaveText")}</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }

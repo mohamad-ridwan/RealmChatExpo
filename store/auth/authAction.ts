@@ -6,7 +6,7 @@ export const userLogin = createAsyncThunk(
     async (data: any, { rejectWithValue }) => {
         try {
             const response = await api.post(
-                'api/customer-service/login',
+                `api/customer-service/login?token=${data.token}`,
                 data
             )
             if (response.data.result) {

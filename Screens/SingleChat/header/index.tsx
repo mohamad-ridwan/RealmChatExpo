@@ -14,7 +14,6 @@ type Props = {
     setIsShowSearch: Dispatch<SetStateAction<boolean>>
     navigation: any
     route: any
-    token: string
 }
 
 export default function Header({
@@ -24,7 +23,6 @@ export default function Header({
     setIsShowSearch,
     navigation,
     route,
-    token
 }: Props) {
     const { colors } = useTheme();
 
@@ -33,7 +31,7 @@ export default function Header({
     const dispatch = useDispatch() as any
 
     return (
-        <View style={{ padding: 15, backgroundColor: '#F0F2F5' }}>
+        <View style={{ padding: 15, backgroundColor: colors.background }}>
             <StatusBar />
 
             <View style={styles.head}>
@@ -41,10 +39,14 @@ export default function Header({
                     <View style={styles.searchBox}>
                         <Ionicons name="search" size={24} color="#01E05B" />
                         <TextInput
-                            style={styles.searchInput}
+                            style={{
+                                ...styles.searchInput,
+                                color: colors.text
+                            }}
                             selectTextOnFocus={isShowSearch}
                             placeholder={i18n.t("Chats.SearchConversation")}
                             onChangeText={(text) => setSearchText(text)}
+                            placeholderTextColor={colors.text}
                             autoFocus
                         />
                         <TouchableOpacity
@@ -81,7 +83,7 @@ export default function Header({
 
                         <View style={styles.middle}>
                             <Text style={{ color: colors.text }}>{userData.push_name ?? userData.chat_id}</Text>
-                            <Text style={styles.message}>{token}</Text>
+                            {/* <Text style={styles.message}>Ridwan</Text> */}
                         </View>
 
                         <View style={styles.rightSide}>

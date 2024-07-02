@@ -7,6 +7,7 @@ import { RootState } from '@/store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { loginSessionName } from '@/utils/storage'
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { useTheme } from '@react-navigation/native'
 
 type Props = {
     currentType: string
@@ -21,6 +22,8 @@ export default function BodySection({
     setAttachment,
     attachment
 }: Props) {
+    const { colors } = useTheme();
+
     const [loading, setLoading] = useState<boolean>(true)
     const { files: currentFiles } = useSelector((state: RootState) => state.fileSlice)
     const files = currentFiles as any
@@ -103,7 +106,7 @@ export default function BodySection({
                             })}
                     </View>
                     : <View>
-                        <Text>Loading...</Text>
+                        <Text style={{color: colors.text}}>Loading...</Text>
                     </View>
                 }
             </ScrollView>

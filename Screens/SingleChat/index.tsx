@@ -1,79 +1,21 @@
-import { View, StyleSheet, Platform, ImageBackground, Alert, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, ImageBackground } from 'react-native'
 import { Audio } from 'expo-av';
-import * as Device from 'expo-device'
-import * as Notifications from 'expo-notifications'
-import Constants from 'expo-constants';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { addNewMessages, setLoader, setSingleUserChat } from '@/store/chat/chatSlice';
 import { getMessages } from '@/store/chat/chatAction';
-import moment from 'moment';
 import socketClient from '@/services/socket';
 import Header from './header';
 import ChatDisplay from './chat-display';
 import Footer from './footer';
 import UploadFile from './upload-file';
-import { FontAwesome } from '@expo/vector-icons';
+import ButtonToEndChat from './ButtonToEndChat';
 
 type Props = {
     route: any
     navigation: any
-}
-
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-    }),
-});
-
-const notificationCategories = [
-    {
-        identifier: 'message',
-        actions: [
-            {
-                identifier: 'markAsRead',
-                buttonTitle: 'Mark as Read',
-                options: {
-                    opensAppToForeground: true,
-                },
-            },
-            {
-                identifier: 'reply',
-                buttonTitle: 'Reply',
-                textInput: {
-                    submitButtonTitle: 'Send',
-                    placeholder: 'Type your reply...',
-                },
-                options: {
-                    opensAppToForeground: true,
-                },
-            },
-        ],
-    },
-];
-
-async function sendPushNotification(expoPushToken: string) {
-    const message = {
-        to: expoPushToken,
-        sound: 'default',
-        title: 'Original Title',
-        body: 'And here is the body!',
-        data: { someData: 'goes here' },
-    };
-
-    await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(message),
-    });
 }
 
 export default function SingleChatScreens({
@@ -93,15 +35,6 @@ export default function SingleChatScreens({
     // SOUND MESSAGE INSIDE
     const [sound, setSound] = useState<any>();
     const [isPlaying, setIsPlaying] = useState(false);
-    // NOTIFICATION
-    const [expoPushToken, setExpoPushToken] = useState('');
-    const [isUpdateToken, setIsUpdateToken] = useState<boolean>(false)
-    const [channels, setChannels] = useState<any>([])
-    const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-        undefined
-    );
-    const notificationListener = useRef<Notifications.Subscription>();
-    const responseListener = useRef<Notifications.Subscription>();
     const [messageIsUpdate, setMessageIsUpdate] = useState<any>(null)
     // UPLOAD FILE
     const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -300,121 +233,6 @@ export default function SingleChatScreens({
         }
     }, [sound, isPlaying])
 
-    async function scheduleNotification() {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "You've got mail! 📬",
-                body: 'Swipe down to see more options.',
-                categoryIdentifier: 'message',
-            },
-            trigger: {
-                seconds: 2,
-            },
-        });
-    }
-
-    useEffect(() => {
-        const subscription = Notifications.addPushTokenListener((token) => {
-            console.log('new token', token)
-        });
-        return () => subscription.remove();
-    }, []);
-
-    function handleRegistrationError(errorMessage: string) {
-        alert(errorMessage);
-        throw new Error(errorMessage);
-    }
-
-    async function schedulePushNotification() {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "You've got mail! 📬",
-                body: 'Here is the notification body',
-                data: { data: 'goes here', test: { test1: 'more data' } },
-                sound: true
-            },
-            trigger: { seconds: 2 },
-        });
-    }
-
-    async function getCategoryNotifications(): Promise<void> {
-        await Notifications.setNotificationCategoryAsync(notificationCategories[0].identifier, notificationCategories[0].actions);
-    }
-
-    async function registerForPushNotificationsAsync() {
-        if (Platform.OS === 'android') {
-            Notifications.setNotificationChannelAsync('default', {
-                name: 'default',
-                importance: Notifications.AndroidImportance.HIGH,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: '#FF231F7C',
-                sound: 'notif.wav'
-            });
-        }
-
-        if (Device.isDevice) {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            let finalStatus = existingStatus;
-            if (existingStatus !== 'granted') {
-                const { status } = await Notifications.requestPermissionsAsync();
-                finalStatus = status;
-            }
-            if (finalStatus !== 'granted') {
-                handleRegistrationError('Permission not granted to get push token for push notification!');
-                return;
-            }
-            const projectId =
-                Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-            if (!projectId) {
-                handleRegistrationError('Project ID not found');
-            }
-            try {
-                const pushTokenString = (
-                    await Notifications.getExpoPushTokenAsync({ projectId })
-                ).data;
-
-                return pushTokenString;
-            } catch (e: unknown) {
-                handleRegistrationError(`${e}`);
-            }
-        } else {
-            handleRegistrationError('Must use physical device for push notifications');
-        }
-    }
-
-    useEffect(() => {
-        registerForPushNotificationsAsync()
-            .then(token => {
-                setExpoPushToken(token ?? '')
-            })
-            .catch((error: any) => setExpoPushToken(`${error}`));
-
-        if (Platform.OS === 'android') {
-            Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
-        }
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            setNotification(notification);
-        });
-
-        // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        //     const actionIdentifier = response.actionIdentifier;
-        //     const userText = response.notification.request.content
-
-        //     if (actionIdentifier === 'markAsRead') {
-        //         console.log('Notification marked as read');
-        //     } else if (actionIdentifier === 'reply') {
-        //         console.log('User replied:', response);
-        //     }
-        // });
-
-        return () => {
-            notificationListener.current &&
-                Notifications.removeNotificationSubscription(notificationListener.current);
-            responseListener.current &&
-                Notifications.removeNotificationSubscription(responseListener.current);
-        };
-    }, []);
-
     const chat_id = useMemo(() => {
         const jid = singleUserChat?.jid
         const chat_id = jid?.replace("@s.whatsapp.net", "")
@@ -456,12 +274,12 @@ export default function SingleChatScreens({
     // }, [userData, sound, isPlaying])
     // ---- UPDATE MESSAGE ON SOCKET.IO
 
-    const currentBottomBtn = useMemo(()=>{
+    const currentBottomBtn = useMemo(() => {
         const height = Math.floor(footerHeight)
         return height + 20
     }, [footerHeight])
 
-    function handleToBottom():void{
+    function handleToBottom(): void {
         scrollRef.current.scrollToEnd({ animated: true })
     }
 
@@ -491,7 +309,6 @@ export default function SingleChatScreens({
                     setIsShowSearch={setIsShowSearch}
                     navigation={navigation}
                     route={route}
-                    token={expoPushToken}
                 />
 
                 <ChatDisplay
@@ -516,22 +333,10 @@ export default function SingleChatScreens({
             </ImageBackground>
             {/* Button To Bottom */}
             {onBtnToBottom &&
-                <View style={{
-                    position: 'absolute',
-                    bottom: currentBottomBtn,
-                    right: 20,
-                    borderRadius: 30,
-                    height: 30,
-                    width: 30,
-                    zIndex: 1,
-                    backgroundColor: '#fff',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                    <TouchableOpacity onPress={handleToBottom}>
-                        <FontAwesome name="angle-double-down" size={22} color="gray" />
-                    </TouchableOpacity>
-                </View>
+                <ButtonToEndChat
+                    currentBottomBtn={currentBottomBtn}
+                    handleToBottom={handleToBottom}
+                />
             }
         </View>
     )
@@ -654,13 +459,12 @@ const styles = StyleSheet.create({
         height: 100,
     },
     sendMessage: {
-        backgroundColor: "#F0F2F5",
+        // backgroundColor: "#F0F2F5",
         paddingTop: 10,
         paddingBottom: 10,
     },
     messageBox: {
         // backgroundColor: "#EAECF2",
-        backgroundColor: 'white',
         paddingLeft: 10,
         paddingRight: 10,
         display: "flex",

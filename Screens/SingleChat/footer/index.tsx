@@ -2,6 +2,7 @@ import { View, TouchableOpacity, TextInput, Image, Text } from 'react-native'
 import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import { Entypo, Ionicons } from '@expo/vector-icons'
 import i18n from '@/utils'
+import { useTheme } from '@react-navigation/native'
 
 type Props = {
     styles: any
@@ -24,6 +25,7 @@ export default function Footer({
     setAttachment,
     setFooterHeight
 }: Props) {
+    const { colors } = useTheme();
 
     const currentFile = useMemo(() => {
         if (attachment) {
@@ -57,10 +59,12 @@ export default function Footer({
         }
         return <></>
     }, [attachment])
-
     return (
         <View
-            style={styles.sendMessage}
+            style={{
+                ...styles.sendMessage,
+                backgroundColor: colors.background
+            }}
             onLayout={(event) => {
                 const { x, y, height, width } = event.nativeEvent.layout;
                 setFooterHeight(height)
@@ -72,10 +76,10 @@ export default function Footer({
                         gap: 4
                     }}>
                         {currentFile}
-                        <Text style={{ fontSize: 12, width: 300 }} numberOfLines={1}>{attachment.file_name}</Text>
+                        <Text style={{ fontSize: 12, width: 300, color: colors.text }} numberOfLines={1}>{attachment.file_name}</Text>
                     </View>
                     <TouchableOpacity onPress={() => setAttachment(null)}>
-                        <Ionicons name="close" size={24} color="#54656F" />
+                        <Ionicons name="close" size={24} color={colors.text} />
                     </TouchableOpacity>
                 </View>
             ) : null}
@@ -91,13 +95,21 @@ export default function Footer({
                 }}>
                     <Entypo name="attachment" size={20} color="#54656F" />
                 </TouchableOpacity>
-                <View style={styles.messageBox}>
+                <View style={{
+                    ...styles.messageBox,
+                    backgroundColor: colors.background
+                }}>
                     <TextInput
                         placeholder={i18n.t("Chats.WriteMessage")}
-                        style={styles.messageInput}
+                        style={{
+                            ...styles.messageInput,
+                            backgroundColor: colors.background,
+                            color: colors.text
+                        }}
                         value={message}
                         multiline
                         numberOfLines={2}
+                        placeholderTextColor={colors.text}
                         onChangeText={(text) => {
                             setMessage(text);
                         }}

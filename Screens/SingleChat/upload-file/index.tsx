@@ -2,6 +2,7 @@ import { Modal, StyleSheet, View } from 'react-native'
 import React, { Dispatch, SetStateAction } from 'react'
 import Header from './Header'
 import FileContent from './file-content'
+import { useTheme } from '@react-navigation/native'
 
 type Props = {
     modalVisible: boolean
@@ -16,6 +17,7 @@ export default function UploadFile({
     setAttachment,
     attachment
 }: Props) {
+    const { colors } = useTheme();
 
     function handleClose(): void {
         setModalVisible(!modalVisible);
@@ -30,7 +32,10 @@ export default function UploadFile({
             onRequestClose={handleClose}
         >
             <View
-                style={styles.container}
+                style={{
+                    ...styles.container,
+                    backgroundColor: colors.background
+                }}
             >
                 <Header closeModal={handleClose} />
                 <FileContent

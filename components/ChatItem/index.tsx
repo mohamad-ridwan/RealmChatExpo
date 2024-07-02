@@ -28,7 +28,7 @@ export default function ChatItem(props: any) {
 
                     </View>
                     <View style={styles.detail}>
-                        <Text style={{ color: colors.text }}>{props.data.push_name ?? props.data.chat_id}</Text>
+                        <Text style={{ color: colors.text }}>{props.data.pushName ?? props.data.chat_id}</Text>
                         {props.data.unreadCount > 0 ? (
                             <Text style={styles.messageBold} numberOfLines={1}>
                                 {props.data.message}
