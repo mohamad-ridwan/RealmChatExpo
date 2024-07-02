@@ -10,6 +10,7 @@ import TrackVideo from './TrackVideo'
 import { PlayT } from '../..'
 
 type Props = {
+    onCaption: boolean
     url: string
     videoId: string
     positionVideo: number
@@ -18,9 +19,11 @@ type Props = {
     setDurationVideo: Dispatch<SetStateAction<number>>
     isPlayVideo: PlayT
     setIsPlayVideo: Dispatch<SetStateAction<PlayT>>
+    handleOnCaption: () => void
 }
 
 export default function VideoViewerType({
+    onCaption,
     url,
     videoId,
     setIsPlayVideo,
@@ -28,7 +31,8 @@ export default function VideoViewerType({
     positionVideo,
     durationVideo,
     setPositionVideo,
-    setDurationVideo
+    setDurationVideo,
+    handleOnCaption,
 }: Props) {
     const [status, setStatus] = useState<any>({});
     const video = useRef<any>(null)
@@ -71,7 +75,17 @@ export default function VideoViewerType({
     }, [isPlayVideo, video, status])
 
     useEffect(() => {
-        if(currentPlayVideo === videoId){
+        if (
+            currentPlayVideo !== '' &&
+            currentPlayVideo !== videoId &&
+            status?.isPlaying
+        ) {
+            video?.current?.stopAsync()
+        }
+    }, [currentPlayVideo, videoId, status, video])
+
+    useEffect(() => {
+        if (currentPlayVideo === videoId) {
             setPositionVideo(status?.positionMillis ?? 0)
             setDurationVideo(status?.durationMillis ?? 0)
             setDefaultTimeStr(convertMilliseconds(status?.durationMillis ?? 0))
@@ -86,20 +100,16 @@ export default function VideoViewerType({
             // if(isPlayVideo === 'play' && status?.positionMillis){
             //     setPositionVideo(status.positionMillis)
             //     setDurationVideo(status.durationMillis)
-    
+
             // }
         }
     }, [status, isPlayVideo, currentPlayVideo])
 
-    function playPausVideo(): void {
-        handlePlayBtn()
-    }
-
     function onValueChangeVideo(e: any): void {
         const value = Math.floor(e)
-        if(video){
+        if (video) {
             video.current.setPositionAsync(value)
-            if(isPlayVideo === 'play'){
+            if (isPlayVideo === 'play') {
                 setIsPlayVideo('play')
             }
         }
@@ -121,43 +131,48 @@ export default function VideoViewerType({
                     rate={1.0}
                 />
                 {/* Play button */}
-                <TouchableOpacity style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                    zIndex: 1,
-                }}
-                    onPress={handlePlayBtn}
+                <TouchableOpacity
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        // backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        zIndex: 1,
+                    }}
+                    onPress={handleOnCaption}
                 >
-                    <TouchableOpacity onPress={handlePlayBtn}>
-                        <View style={{
-                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                            height: 60,
-                            width: 60,
-                            borderRadius: 60,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            {status.isPlaying ?
-                                <Fontisto name="pause" size={23} color="white" /> :
-                                <FontAwesome5 name="play" size={23} color="white" />
-                            }
-                        </View>
-                    </TouchableOpacity>
+                    {onCaption &&
+                        <TouchableOpacity onPress={handlePlayBtn}>
+                            <View style={{
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                height: 60,
+                                width: 60,
+                                borderRadius: 60,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}>
+                                {status.isPlaying ?
+                                    <Fontisto name="pause" size={23} color="white" /> :
+                                    <FontAwesome5 name="play" size={23} color="white" />
+                                }
+                            </View>
+                        </TouchableOpacity>
+                    }
                 </TouchableOpacity>
             </View>
-            <Caption>
-                <TrackVideo
-                    position={positionVideo}
-                    duration={durationVideo}
-                    timeStr={timeStr}
-                    defaultTimeStr={defaultTimeStr}
-                    onValueChange={onValueChangeVideo}
-                />
-            </Caption>
+            {onCaption &&
+                <Caption>
+                    <TrackVideo
+                        position={positionVideo}
+                        duration={durationVideo}
+                        timeStr={timeStr}
+                        defaultTimeStr={defaultTimeStr}
+                        onValueChange={onValueChangeVideo}
+                    />
+                </Caption>
+            }
         </>
     )
 }

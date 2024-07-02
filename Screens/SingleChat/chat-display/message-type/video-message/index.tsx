@@ -22,6 +22,10 @@ export default function VideoMessage({
   const [status, setStatus] = React.useState<any>({});
   const [videoId, setVideoId] = useState<string>('')
   const [isPreloading, setIsPreloading] = useState<boolean>(true)
+  // On Load More message
+  const [defaultNumberOfLines, setDefaultNumberOfLines] = useState<number | undefined>(16)
+  const [numberOfLines, setNumberOfLines] = useState<number>(0)
+  const [onLoadMore, setOnLoadMore] = useState<boolean>(true)
   // downloaded file
   const [downloadProgress, setDownloadProgress] = useState(0);
 
@@ -95,13 +99,18 @@ export default function VideoMessage({
     setDownloadProgress(progress);
   };
 
-  useEffect(()=>{
-    if(generate?.length > 0 || v.message.videoMessage.url){
+  useEffect(() => {
+    if (generate?.length > 0 || v.message.videoMessage.url) {
       setTimeout(() => {
         setIsPreloading(false)
       }, 0);
     }
   }, [v, generate])
+
+  function handleLoadMore(): void {
+    setDefaultNumberOfLines(undefined)
+    setOnLoadMore(false)
+  }
 
   return (
     <View style={styles.container}>
@@ -125,8 +134,8 @@ export default function VideoMessage({
             onPlaybackStatusUpdate={status => setStatus(() => status)}
             volume={1.0}
             rate={1.0}
-            // onLoadStart={() => setIsPreloading(true)}
-            // onReadyForDisplay={() => setIsPreloading(false)}
+          // onLoadStart={() => setIsPreloading(true)}
+          // onReadyForDisplay={() => setIsPreloading(false)}
           />
           {/* Play button */}
           <TouchableNativeFeedback
@@ -150,7 +159,7 @@ export default function VideoMessage({
                   style={{ flex: 1, zIndex: 1 }}
                 />
                 :
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleClickVideo}>
                   <View style={{
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     height: 50,
@@ -208,9 +217,22 @@ export default function VideoMessage({
         </View>
       </View> */}
       {v?.message?.videoMessage?.caption &&
-        <Text style={{ paddingTop: 5, paddingHorizontal: 5, fontSize: 13, color: fontColor }}>
+        <Text
+          style={{ paddingTop: 5, paddingHorizontal: 5, fontSize: 13, color: fontColor }}
+          numberOfLines={defaultNumberOfLines}
+          onTextLayout={(event) => {
+            const { lines } = event.nativeEvent
+            setNumberOfLines(lines?.length)
+          }}
+        >
           {v.message.videoMessage?.caption}
         </Text>
+      }
+
+      {numberOfLines > 16 && onLoadMore &&
+        <TouchableOpacity onPress={handleLoadMore}>
+          <Text style={{ color: '#0077B6', marginLeft: 5, fontSize: 14 }}>Read More</Text>
+        </TouchableOpacity>
       }
     </View>
   )

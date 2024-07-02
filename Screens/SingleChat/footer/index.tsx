@@ -11,6 +11,7 @@ type Props = {
     onSendMessages: () => void
     attachment: any
     setAttachment: Dispatch<SetStateAction<any>>
+    setFooterHeight: Dispatch<SetStateAction<number>>
 }
 
 export default function Footer({
@@ -20,7 +21,8 @@ export default function Footer({
     pickImage,
     onSendMessages,
     attachment,
-    setAttachment
+    setAttachment,
+    setFooterHeight
 }: Props) {
 
     const currentFile = useMemo(() => {
@@ -57,7 +59,13 @@ export default function Footer({
     }, [attachment])
 
     return (
-        <View style={styles.sendMessage}>
+        <View
+            style={styles.sendMessage}
+            onLayout={(event) => {
+                const { x, y, height, width } = event.nativeEvent.layout;
+                setFooterHeight(height)
+            }}
+        >
             {attachment ? (
                 <View style={styles.selectedImageBox}>
                     <View style={{

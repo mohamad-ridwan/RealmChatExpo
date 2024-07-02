@@ -14,6 +14,7 @@ export type PlayT = 'no-play' | 'stop' | 'play' | 'pause'
 
 export default function FullScreenViewer() {
     const [images, setImages] = useState<any>([])
+    // CAPTION
     const [onCaption, setOnCaption] = useState<boolean>(true)
     // VIDEO
     const [isPlayVideo, setIsPlayVideo] = useState<PlayT>('no-play')
@@ -185,6 +186,8 @@ export default function FullScreenViewer() {
                                         setDurationVideo={setDurationVideo}
                                         durationVideo={durationVideo}
                                         positionVideo={positionVideo}
+                                        onCaption={onCaption}
+                                        handleOnCaption={handleOnCaption}
                                     />
                                 }
                             </View>

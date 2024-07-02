@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform, ImageBackground, Alert } from 'react-native'
+import { View, StyleSheet, Platform, ImageBackground, Alert, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
 import { Audio } from 'expo-av';
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
@@ -15,6 +15,7 @@ import Header from './header';
 import ChatDisplay from './chat-display';
 import Footer from './footer';
 import UploadFile from './upload-file';
+import { FontAwesome } from '@expo/vector-icons';
 
 type Props = {
     route: any
@@ -105,6 +106,9 @@ export default function SingleChatScreens({
     // UPLOAD FILE
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [attachment, setAttachment] = useState<any>(null)
+
+    const [onBtnToBottom, setOnBtnToBottom] = useState<boolean>(false)
+    const [footerHeight, setFooterHeight] = useState<number>(0)
 
     const { userData, device } = route.params
     const { devices } = useSelector((state: RootState) => state.deviceSlice)
@@ -366,7 +370,7 @@ export default function SingleChatScreens({
             }
             try {
                 const pushTokenString = (
-                    await Notifications.getExpoPushTokenAsync({projectId})
+                    await Notifications.getExpoPushTokenAsync({ projectId })
                 ).data;
 
                 return pushTokenString;
@@ -452,6 +456,15 @@ export default function SingleChatScreens({
     // }, [userData, sound, isPlaying])
     // ---- UPDATE MESSAGE ON SOCKET.IO
 
+    const currentBottomBtn = useMemo(()=>{
+        const height = Math.floor(footerHeight)
+        return height + 20
+    }, [footerHeight])
+
+    function handleToBottom():void{
+        scrollRef.current.scrollToEnd({ animated: true })
+    }
+
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>
             <ImageBackground source={require('@/assets/images/bg-chat.png')} style={{
@@ -463,7 +476,7 @@ export default function SingleChatScreens({
                     width: '100%',
                     zIndex: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.1)'
-                }}/>
+                }} />
                 {/* MODAL UPLOAD FILE / SEND FILE */}
                 <UploadFile
                     modalVisible={modalVisible}
@@ -486,6 +499,8 @@ export default function SingleChatScreens({
                     loader={loader}
                     singleUserChat={singleUserChat}
                     styles={styles}
+                    onBtnToBottom={onBtnToBottom}
+                    setOnBtnToBottom={setOnBtnToBottom}
                 />
 
                 <Footer
@@ -496,8 +511,28 @@ export default function SingleChatScreens({
                     onSendMessages={onSendMessages}
                     attachment={attachment}
                     setAttachment={setAttachment}
+                    setFooterHeight={setFooterHeight}
                 />
             </ImageBackground>
+            {/* Button To Bottom */}
+            {onBtnToBottom &&
+                <View style={{
+                    position: 'absolute',
+                    bottom: currentBottomBtn,
+                    right: 20,
+                    borderRadius: 30,
+                    height: 30,
+                    width: 30,
+                    zIndex: 1,
+                    backgroundColor: '#fff',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <TouchableOpacity onPress={handleToBottom}>
+                        <FontAwesome name="angle-double-down" size={22} color="gray" />
+                    </TouchableOpacity>
+                </View>
+            }
         </View>
     )
 }
